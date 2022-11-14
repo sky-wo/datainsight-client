@@ -1,0 +1,21 @@
+schema:
+  - http://192.168.100.62:9999/graphql
+overwrite: true
+config:
+  resolvers: false
+documents:
+  - src/app/core/graphql/*.graphql
+generates:
+  src/app/core/type/graphql-type.ts:
+    config:
+      noNamespaces: true
+      resolvers: false
+      enumsAsTypes: true
+      avoidOptionals: true
+      immutableTypes: true
+      scalars:
+        Long: number
+    plugins:
+      - typescript
+      - typescript-operations
+      - typescript-apollo-angular

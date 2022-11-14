@@ -1,0 +1,3 @@
+mutation ($actorInput: ActorInput!) {
+  addActor(actorInput: $actorInput)
+}

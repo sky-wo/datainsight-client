@@ -1,0 +1,10 @@
+query ($id: ID!) {
+  connector(id: $id) {
+    name
+    specification {
+      documentationUrl
+      changelogUrl
+      connectionSpecification
+    }
+  }
+}

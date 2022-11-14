@@ -1,0 +1,50 @@
+<button nz-button nzType="primary" (click)="showModal()">
+    <span>添加源</span>
+</button>
+<nz-modal [(nzVisible)]="isVisible" nzTitle="Modal Title" (nzOnCancel)="handleCancel()" (nzOnOk)="submitForm()"
+    [nzOkLoading]="isOkLoading">
+    <nz-card *nzModalContent nzTitle="添加源">
+        <form nz-form [formGroup]="validateForm" (submit)="submitForm()">
+            <nz-form-item>
+                <nz-form-label [nzSpan]="4" nzRequired nzFor="name">镜像名称</nz-form-label>
+                <nz-form-control [nzSpan]="8" nzErrorTip="请输入镜像名称">
+                    <input type="text" nz-input formControlName="name" placeholder="请输入镜像名称" />
+                </nz-form-control>
+            </nz-form-item>
+            <nz-form-item>
+                <nz-form-label [nzSpan]="4" nzRequired nzFor="image">镜像</nz-form-label>
+                <nz-form-control [nzSpan]="8" nzErrorTip="请输入镜像名称">
+                    <input type="text" nz-input formControlName="image" placeholder="请输入镜像名称" />
+                </nz-form-control>
+            </nz-form-item>
+            <nz-form-item>
+                <nz-form-label [nzSpan]="4" nzRequired nzFor="version">版本</nz-form-label>
+                <nz-form-control [nzSpan]="8" nzErrorTip="请输入镜像名称">
+                    <input type="text" nz-input formControlName="version" placeholder="请输入镜像版本" />
+                </nz-form-control>
+            </nz-form-item>
+            <!-- <nz-form-item>
+                <nz-form-control [nzSpan]="8" [nzOffset]="4">
+                    <button nz-button nzType="primary" [nzLoading]="loading">下一步</button>
+                </nz-form-control>
+            </nz-form-item> -->
+        </form>
+    </nz-card>
+</nz-modal>
+<nz-table #basicTable [nzData]="listOfData" [(nzPageIndex)]="pageIndex" [(nzPageSize)]="pageSize" [nzTotal]="totalData"
+    [nzFrontPagination]="false" (nzPageIndexChange)="pageChange()">
+    <thead>
+        <tr>
+            <th>名称</th>
+            <th>镜像</th>
+            <th>版本</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr *ngFor="let data of basicTable.data">
+            <td>{{ data.name }}</td>
+            <td>{{ data.image }}</td>
+            <td>{{ data.version }}</td>
+        </tr>
+    </tbody>
+</nz-table>

@@ -1,0 +1,32 @@
+<div class="wapper">
+    <nz-layout>
+        <nz-sider nzCollapsible [(nzCollapsed)]="isCollapsed" [nzTrigger]="null">
+            <div class="logo"></div>
+            <ul nz-menu nzTheme="dark" nzMode="inline">
+                <li nz-menu-item nzMatchRouter >
+                    <span nz-icon nzType="file"></span>
+                    <a [routerLink]="['/frame/sources']" routerLinkActive="active">源</a>
+                </li>
+                <li nz-menu-item nzMatchRouter>
+                    <span nz-icon nzType="file"></span>
+                    <a [routerLink]="['/frame/settings/frameSettings/connector']" routerLinkActive="active">设置</a>
+                </li>
+            </ul>
+        </nz-sider>
+        <nz-layout>
+            <nz-header>
+                <span class="trigger" nz-icon [nzType]="isCollapsed ? 'menu-unfold' : 'menu-fold'"
+                    (click)="isCollapsed = !isCollapsed"></span>
+            </nz-header>
+            <nz-content>
+                <nz-breadcrumb>
+                    <nz-breadcrumb-item></nz-breadcrumb-item>
+
+                </nz-breadcrumb>
+                <div class="inner-content">
+                    <router-outlet></router-outlet>
+                </div>
+            </nz-content>
+        </nz-layout>
+    </nz-layout>
+</div>
