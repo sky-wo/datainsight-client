@@ -1,5 +1,5 @@
 schema:
-  - http://192.168.100.62:9999/graphql
+  - ${DATAINSIGHT_SERVER_ENDPOINT}graphql
 overwrite: true
 config:
   resolvers: false
