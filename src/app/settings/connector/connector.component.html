@@ -31,8 +31,8 @@
         </form>
     </nz-card>
 </nz-modal>
-<nz-table #basicTable [nzData]="listOfData" [(nzPageIndex)]="pageIndex" [(nzPageSize)]="pageSize" [nzTotal]="totalData"
-    [nzFrontPagination]="false" (nzPageIndexChange)="pageChange()">
+<nz-table #basicTable [nzData]="listOfData" [(nzPageIndex)]="currentPageIndex" [(nzPageSize)]="pageSize" [nzTotal]="totalData"
+          [nzFrontPagination]="false" (nzPageIndexChange)="pageChange()">
     <thead>
         <tr>
             <th>名称</th>

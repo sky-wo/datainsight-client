@@ -1,8 +1,8 @@
-import { Component, OnInit } from '@angular/core';
-import { UntypedFormBuilder, UntypedFormGroup, Validators } from '@angular/forms';
-import { ConnectorService } from 'src/app/core/service/connector.service';
-import { Connector, ConnectorInput } from 'src/app/core/type/graphql-type';
-import { NzMessageService } from 'ng-zorro-antd/message';
+import {Component, OnInit} from '@angular/core';
+import {UntypedFormBuilder, UntypedFormGroup, Validators} from '@angular/forms';
+import {ConnectorService} from 'src/app/core/service/connector.service';
+import {Connector, ConnectorInput} from 'src/app/core/type/graphql-type';
+import {NzMessageService} from 'ng-zorro-antd/message';
 
 @Component({
   selector: 'app-connector',
@@ -11,11 +11,10 @@ import { NzMessageService } from 'ng-zorro-antd/message';
 })
 export class ConnectorComponent implements OnInit {
 
-
   listOfData: Connector[] = []
-  pageIndex: number = 1
   pageSize: number = 10
   totalData: number = 0
+  currentPageIndex: number = 1
   isVisible = false;
   isOkLoading = false;
   validateForm!: UntypedFormGroup;
@@ -33,28 +32,27 @@ export class ConnectorComponent implements OnInit {
       image: [null, [Validators.required]],
       version: [null, [Validators.required]],
     });
-    this.connectors(this.pageSize, (this.pageIndex - 1) * this.pageSize)
+    this.pagingQueryConnectors(this.pageSize, (this.currentPageIndex - 1) * this.pageSize)
   }
 
-  connectors(first: number, skip: number) {
-    const t = this.connectorService.connectors(first, skip).valueChanges.subscribe(
+  pagingQueryConnectors(first: number, skip: number) {
+    this.connectorService.pagingQueryConnectors(first, skip).valueChanges.subscribe(
       {
         next: r => {
           this.listOfData = r.data.connectors.items as Connector[]
           this.totalData = r.data.connectors.total
-
         },
         error: e => {
           console.error("connectors发生位置错误" + e)
         }
       }
     )
-
   }
+
+
   pageChange() {
-    this.connectors(this.pageSize, (this.pageIndex - 1) * this.pageSize)
+    this.pagingQueryConnectors(this.pageSize, (this.currentPageIndex - 1) * this.pageSize)
   }
-
 
 
   showModal(): void {
@@ -89,7 +87,7 @@ export class ConnectorComponent implements OnInit {
           next: _ => {
             this.isOkLoading = false
             this.isVisible = false
-            this.connectorService.connectors(this.pageSize, (this.pageIndex - 1) * this.pageSize).refetch()
+            this.connectorService.pagingQueryConnectors(this.pageSize, (this.currentPageIndex - 1) * this.pageSize).refetch()
           },
           error: e => {
             this.isOkLoading = false
@@ -103,7 +101,7 @@ export class ConnectorComponent implements OnInit {
       Object.values(this.validateForm.controls).forEach(control => {
         if (control.invalid) {
           control.markAsDirty();
-          control.updateValueAndValidity({ onlySelf: true });
+          control.updateValueAndValidity({onlySelf: true});
         }
       });
     }
