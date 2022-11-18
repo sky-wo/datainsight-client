@@ -3,7 +3,7 @@ import { Apollo, gql, MutationResult, QueryRef } from 'apollo-angular';
 import { map, Observable } from 'rxjs';
 import { ActorInput, ActorPage, Connector, ConnectorPage } from '../type/graphql-type';
 
-const QUERYCONNECTORS = gql`
+const QUERY_CONNECTORS = gql`
   query connectors($first: Int!, $skip: Long!) {
   connectors(first: $first, skip: $skip) {
     total
@@ -14,7 +14,7 @@ const QUERYCONNECTORS = gql`
   }
 }
 `
-const QUERYCONNECTOR = gql`
+const QUERY_CONNECTOR = gql`
 query connector($id: ID!) {
   connector(id: $id) {
     name
@@ -26,7 +26,7 @@ query connector($id: ID!) {
   }
 }
 `
-const QUERYACTOR = gql`
+const QUERY_ACTOR = gql`
   query actors($first:Int!,$skip:Long!){
     actors(first:$first,skip:$skip){
       total
@@ -43,7 +43,7 @@ const QUERYACTOR = gql`
     }
   }
 `
-const ADDACTOR = gql`
+const ADD_ACTOR = gql`
 mutation addActor($actorInput: ActorInput!) {
   addActor(actorInput: $actorInput)
 }
@@ -59,7 +59,7 @@ export class SourcesService {
 
   connectors(): Observable<{ connectors: ConnectorPage }> {
     return this.apollo.query<{ connectors: ConnectorPage }, { first: number, skip: number }>({
-      query: QUERYCONNECTORS,
+      query: QUERY_CONNECTORS,
       variables: {
         first: 100,
         skip: 0
@@ -71,7 +71,7 @@ export class SourcesService {
 
   connector(id: string): Observable<{ connector: Connector }> {
     return this.apollo.query<{ connector: Connector }, { id: string }>({
-      query: QUERYCONNECTOR,
+      query: QUERY_CONNECTOR,
       variables: {
         id: id,
       }
@@ -81,7 +81,7 @@ export class SourcesService {
   }
   actors(first: number, skip: number): QueryRef<{ actors: ActorPage }, { first: number, skip: number }> {
     return this.apollo.watchQuery<{ actors: ActorPage }, { first: number, skip: number }>({
-      query: QUERYACTOR,
+      query: QUERY_ACTOR,
       variables: {
         first: first,
         skip: skip
@@ -90,7 +90,7 @@ export class SourcesService {
   }
   addActor(actorInput: ActorInput): Observable<MutationResult<number>> {
     return this.apollo.mutate<number, { actorInput: ActorInput }>({
-      mutation: ADDACTOR,
+      mutation: ADD_ACTOR,
       variables: {
         actorInput: actorInput
       }
