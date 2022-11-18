@@ -12,152 +12,154 @@ export type Scalars = {
   Int: number;
   Float: number;
   /** 任意 JSON 对象 */
-  JSON: any;
+  JSON: string;
   /** A 64-bit signed integer */
   Long: number;
   /** 事件戳, 从1970-1-1起的毫秒数 */
-  Timestamp: any;
+  Timestamp: string;
 };
 
 /**  连接器实例 */
 export type Actor = {
-  readonly __typename?: 'Actor';
-  readonly catalog: DataInsightCatalog;
-  readonly connector: Maybe<Connector>;
-  readonly connectorConfig: Scalars['JSON'];
-  readonly connectorId: Scalars['ID'];
-  readonly id: Scalars['ID'];
-  readonly name: Scalars['String'];
+  __typename?: 'Actor';
+  catalog: DataInsightCatalog;
+  connector?: Maybe<Connector>;
+  connectorConfig: Scalars['JSON'];
+  connectorId: Scalars['ID'];
+  id: Scalars['ID'];
+  name: Scalars['String'];
 };
 
 export type ActorInput = {
-  readonly connectorConfig: Scalars['JSON'];
-  readonly connectorId: Scalars['ID'];
-  readonly name: Scalars['String'];
+  connectorConfig: Scalars['JSON'];
+  connectorId: Scalars['ID'];
+  name: Scalars['String'];
 };
 
 export type ActorPage = {
-  readonly __typename?: 'ActorPage';
-  readonly items: ReadonlyArray<Actor>;
-  readonly total: Scalars['Long'];
+  __typename?: 'ActorPage';
+  items: Array<Actor>;
+  total: Scalars['Long'];
 };
 
 export type ConfiguredDataInsightCatalog = {
-  readonly __typename?: 'ConfiguredDataInsightCatalog';
-  readonly streams: ReadonlyArray<ConfiguredDataInsightStream>;
+  __typename?: 'ConfiguredDataInsightCatalog';
+  streams: Array<ConfiguredDataInsightStream>;
 };
 
 export type ConfiguredDataInsightCatalogInput = {
-  readonly streams: ReadonlyArray<ConfiguredDataInsightStreamInput>;
+  streams: Array<ConfiguredDataInsightStreamInput>;
 };
 
 export type ConfiguredDataInsightStream = {
-  readonly __typename?: 'ConfiguredDataInsightStream';
-  readonly cursorField: Maybe<ReadonlyArray<Scalars['String']>>;
-  readonly destinationSyncMode: DataInsightDestinationSyncMode;
-  readonly primaryKey: Maybe<ReadonlyArray<Scalars['String']>>;
-  readonly stream: DataInsightStream;
-  readonly syncMode: DataInsightSyncMode;
+  __typename?: 'ConfiguredDataInsightStream';
+  cursorField?: Maybe<Array<Scalars['String']>>;
+  destinationSyncMode: DataInsightDestinationSyncMode;
+  primaryKey?: Maybe<Array<Scalars['String']>>;
+  stream: DataInsightStream;
+  syncMode: DataInsightSyncMode;
 };
 
 export type ConfiguredDataInsightStreamInput = {
-  readonly cursorField: InputMaybe<ReadonlyArray<Scalars['String']>>;
-  readonly destinationSyncMode: DataInsightDestinationSyncMode;
-  readonly primaryKey: InputMaybe<ReadonlyArray<Scalars['String']>>;
-  readonly stream: DataInsightStreamInput;
-  readonly syncMode: DataInsightSyncMode;
+  cursorField?: InputMaybe<Array<Scalars['String']>>;
+  destinationSyncMode: DataInsightDestinationSyncMode;
+  primaryKey?: InputMaybe<Array<Scalars['String']>>;
+  stream: DataInsightStreamInput;
+  syncMode: DataInsightSyncMode;
 };
 
 /**  连接器定义 */
 export type Connector = {
-  readonly __typename?: 'Connector';
-  readonly id: Scalars['ID'];
-  readonly image: Scalars['String'];
-  readonly name: Scalars['String'];
-  readonly specification: ConnectorSpecification;
-  readonly version: Scalars['String'];
+  __typename?: 'Connector';
+  id: Scalars['ID'];
+  image: Scalars['String'];
+  name: Scalars['String'];
+  specification: ConnectorSpecification;
+  version: Scalars['String'];
 };
 
 export type ConnectorInput = {
-  readonly image: Scalars['String'];
-  readonly name: Scalars['String'];
-  readonly version: Scalars['String'];
+  image: Scalars['String'];
+  name: Scalars['String'];
+  version: Scalars['String'];
 };
 
 export type ConnectorPage = {
-  readonly __typename?: 'ConnectorPage';
-  readonly items: ReadonlyArray<Connector>;
-  readonly total: Scalars['Long'];
+  __typename?: 'ConnectorPage';
+  items: Array<Connector>;
+  total: Scalars['Long'];
 };
 
 export type ConnectorSpecification = {
-  readonly __typename?: 'ConnectorSpecification';
-  readonly changelogUrl: Maybe<Scalars['String']>;
-  readonly connectionSpecification: Scalars['JSON'];
-  readonly documentationUrl: Maybe<Scalars['String']>;
+  __typename?: 'ConnectorSpecification';
+  changelogUrl?: Maybe<Scalars['String']>;
+  connectionSpecification: Scalars['JSON'];
+  documentationUrl?: Maybe<Scalars['String']>;
 };
 
 export type DataInsightCatalog = {
-  readonly __typename?: 'DataInsightCatalog';
-  readonly streams: ReadonlyArray<DataInsightStream>;
+  __typename?: 'DataInsightCatalog';
+  streams: Array<DataInsightStream>;
 };
 
-export type DataInsightDestinationSyncMode =
-  | 'APPEND'
-  | 'DEDUP'
-  | 'OVERWRITE';
+export enum DataInsightDestinationSyncMode {
+  Append = 'APPEND',
+  Dedup = 'DEDUP',
+  Overwrite = 'OVERWRITE'
+}
 
 export type DataInsightStream = {
-  readonly __typename?: 'DataInsightStream';
-  readonly defaultCursorField: Maybe<ReadonlyArray<Scalars['String']>>;
-  readonly jsonSchema: Scalars['JSON'];
-  readonly name: Scalars['String'];
-  readonly namespace: Maybe<Scalars['String']>;
-  readonly sourceDefinedCursor: Maybe<Scalars['Boolean']>;
-  readonly sourceDefinedPrimaryKey: Maybe<ReadonlyArray<Scalars['String']>>;
-  readonly supportedSyncModes: Maybe<ReadonlyArray<DataInsightSyncMode>>;
+  __typename?: 'DataInsightStream';
+  defaultCursorField?: Maybe<Array<Scalars['String']>>;
+  jsonSchema: Scalars['JSON'];
+  name: Scalars['String'];
+  namespace?: Maybe<Scalars['String']>;
+  sourceDefinedCursor?: Maybe<Scalars['Boolean']>;
+  sourceDefinedPrimaryKey?: Maybe<Array<Scalars['String']>>;
+  supportedSyncModes?: Maybe<Array<DataInsightSyncMode>>;
 };
 
 export type DataInsightStreamInput = {
-  readonly defaultCursorField: InputMaybe<ReadonlyArray<Scalars['String']>>;
-  readonly jsonSchema: Scalars['JSON'];
-  readonly name: Scalars['String'];
-  readonly namespace: InputMaybe<Scalars['String']>;
-  readonly sourceDefinedCursor: InputMaybe<Scalars['Boolean']>;
-  readonly sourceDefinedPrimaryKey: InputMaybe<ReadonlyArray<Scalars['String']>>;
-  readonly supportedSyncModes: InputMaybe<ReadonlyArray<DataInsightSyncMode>>;
+  defaultCursorField?: InputMaybe<Array<Scalars['String']>>;
+  jsonSchema: Scalars['JSON'];
+  name: Scalars['String'];
+  namespace?: InputMaybe<Scalars['String']>;
+  sourceDefinedCursor?: InputMaybe<Scalars['Boolean']>;
+  sourceDefinedPrimaryKey?: InputMaybe<Array<Scalars['String']>>;
+  supportedSyncModes?: InputMaybe<Array<DataInsightSyncMode>>;
 };
 
-export type DataInsightSyncMode =
-  | 'FULL_REFRESH'
-  | 'INCREMENTAL';
+export enum DataInsightSyncMode {
+  FullRefresh = 'FULL_REFRESH',
+  Incremental = 'INCREMENTAL'
+}
 
 export type DataRule = {
-  readonly __typename?: 'DataRule';
-  readonly content: Scalars['JSON'];
-  readonly dataTagId: Scalars['ID'];
-  readonly id: Scalars['ID'];
+  __typename?: 'DataRule';
+  content: Scalars['JSON'];
+  dataTagId: Scalars['ID'];
+  id: Scalars['ID'];
 };
 
 export type DataRuleInput = {
-  readonly content: Scalars['JSON'];
+  content: Scalars['JSON'];
 };
 
 export type DataRulesPage = {
-  readonly __typename?: 'DataRulesPage';
-  readonly items: ReadonlyArray<DataRule>;
-  readonly total: Scalars['Long'];
+  __typename?: 'DataRulesPage';
+  items: Array<DataRule>;
+  total: Scalars['Long'];
 };
 
 export type DataTag = {
-  readonly __typename?: 'DataTag';
-  readonly alert: Scalars['Boolean'];
-  readonly id: Scalars['ID'];
-  readonly level: Scalars['Int'];
-  readonly name: Scalars['String'];
-  readonly parentId: Maybe<Scalars['ID']>;
-  readonly rule: DataRule;
-  readonly rules: DataRulesPage;
+  __typename?: 'DataTag';
+  alert: Scalars['Boolean'];
+  id: Scalars['ID'];
+  level: Scalars['Int'];
+  name: Scalars['String'];
+  parentId?: Maybe<Scalars['ID']>;
+  rule: DataRule;
+  rules: DataRulesPage;
 };
 
 
@@ -172,38 +174,39 @@ export type DataTagRulesArgs = {
 };
 
 export type DataTagInput = {
-  readonly alert: Scalars['Boolean'];
-  readonly level: Scalars['Int'];
-  readonly name: Scalars['String'];
+  alert: Scalars['Boolean'];
+  level: Scalars['Int'];
+  name: Scalars['String'];
 };
 
 export type DataTagsPage = {
-  readonly __typename?: 'DataTagsPage';
-  readonly items: ReadonlyArray<DataTag>;
-  readonly total: Scalars['Long'];
+  __typename?: 'DataTagsPage';
+  items: Array<DataTag>;
+  total: Scalars['Long'];
 };
 
-export type LogLevel =
-  | 'DEBUG'
-  | 'ERROR'
-  | 'INFO'
-  | 'TRACE'
-  | 'WARN';
+export enum LogLevel {
+  Debug = 'DEBUG',
+  Error = 'ERROR',
+  Info = 'INFO',
+  Trace = 'TRACE',
+  Warn = 'WARN'
+}
 
 export type Mutation = {
-  readonly __typename?: 'Mutation';
-  readonly addActor: Scalars['ID'];
-  readonly addConnector: Scalars['ID'];
-  readonly addDataRule: Scalars['ID'];
-  readonly addDataTag: Scalars['ID'];
-  readonly addTask: Scalars['ID'];
-  readonly cancelTask: Scalars['Int'];
-  readonly moveDataRule: Scalars['Int'];
-  readonly moveDataTag: Maybe<Scalars['Int']>;
-  readonly removeActor: Scalars['Int'];
-  readonly removeConnector: Scalars['Int'];
-  readonly removeTask: Scalars['Int'];
-  readonly startTask: Scalars['Int'];
+  __typename?: 'Mutation';
+  addActor: Scalars['ID'];
+  addConnector: Scalars['ID'];
+  addDataRule: Scalars['ID'];
+  addDataTag: Scalars['ID'];
+  addTask: Scalars['ID'];
+  cancelTask: Scalars['Int'];
+  moveDataRule: Scalars['Int'];
+  moveDataTag?: Maybe<Scalars['Int']>;
+  removeActor: Scalars['Int'];
+  removeConnector: Scalars['Int'];
+  removeTask: Scalars['Int'];
+  startTask: Scalars['Int'];
 };
 
 
@@ -225,7 +228,7 @@ export type MutationAddDataRuleArgs = {
 
 export type MutationAddDataTagArgs = {
   dataTagInput: DataTagInput;
-  parentId: InputMaybe<Scalars['ID']>;
+  parentId?: InputMaybe<Scalars['ID']>;
 };
 
 
@@ -248,7 +251,7 @@ export type MutationMoveDataRuleArgs = {
 
 export type MutationMoveDataTagArgs = {
   dataTagId: Scalars['ID'];
-  newParentId: InputMaybe<Scalars['ID']>;
+  newParentId?: InputMaybe<Scalars['ID']>;
 };
 
 
@@ -272,16 +275,16 @@ export type MutationStartTaskArgs = {
 };
 
 export type Query = {
-  readonly __typename?: 'Query';
-  readonly actor: Actor;
-  readonly actors: ActorPage;
-  readonly connector: Connector;
-  readonly connectors: ConnectorPage;
-  readonly dataTag: DataTag;
+  __typename?: 'Query';
+  actor: Actor;
+  actors: ActorPage;
+  connector: Connector;
+  connectors: ConnectorPage;
+  dataTag: DataTag;
   /**  查询所有的数据标签 */
-  readonly dataTags: DataTagsPage;
-  readonly task: Task;
-  readonly tasks: TasksPage;
+  dataTags: DataTagsPage;
+  task: Task;
+  tasks: TasksPage;
 };
 
 
@@ -329,20 +332,20 @@ export type QueryTasksArgs = {
 };
 
 export type Task = {
-  readonly __typename?: 'Task';
-  readonly actor: Actor;
-  readonly actorId: Scalars['ID'];
-  readonly configuredCatalog: ConfiguredDataInsightCatalog;
+  __typename?: 'Task';
+  actor: Actor;
+  actorId: Scalars['ID'];
+  configuredCatalog: ConfiguredDataInsightCatalog;
   /**  保存的连接器的状态, 此项比较慢, 仅必要时才应查询此项 */
-  readonly connectorState: Maybe<TaskRunConnectorState>;
+  connectorState?: Maybe<TaskRunConnectorState>;
   /**  任务计数器, 此项比较慢, 仅必要时才应查询此项 */
-  readonly counter: Maybe<TaskCounter>;
-  readonly id: Scalars['ID'];
-  readonly inspectorConfig: TaskInspectorConfig;
-  readonly state: TaskState;
-  readonly supervisorConfig: Scalars['JSON'];
-  readonly taskRun: TaskRun;
-  readonly taskRuns: Maybe<TaskRunsPage>;
+  counter?: Maybe<TaskCounter>;
+  id: Scalars['ID'];
+  inspectorConfig: TaskInspectorConfig;
+  state: TaskState;
+  supervisorConfig: Scalars['JSON'];
+  taskRun: TaskRun;
+  taskRuns?: Maybe<TaskRunsPage>;
 };
 
 
@@ -358,127 +361,130 @@ export type TaskTaskRunsArgs = {
 
 /**  任务计数器 */
 export type TaskCounter = {
-  readonly __typename?: 'TaskCounter';
-  readonly id: Scalars['ID'];
+  __typename?: 'TaskCounter';
+  id: Scalars['ID'];
   /**  流属性计数器, 比较慢, 非必要不要取 */
-  readonly streamProperties: ReadonlyArray<TaskStreamPropertyCounter>;
+  streamProperties: Array<TaskStreamPropertyCounter>;
   /**  流计数器, 比较慢, 非必要不要取 */
-  readonly streams: ReadonlyArray<TaskStreamCounter>;
+  streams: Array<TaskStreamCounter>;
 };
 
 export type TaskCounterItem = {
-  readonly __typename?: 'TaskCounterItem';
-  readonly name: Scalars['String'];
-  readonly value: Scalars['Long'];
+  __typename?: 'TaskCounterItem';
+  name: Scalars['String'];
+  value: Scalars['Long'];
 };
 
 export type TaskInput = {
-  readonly actorId: Scalars['ID'];
-  readonly configuredCatalog: ConfiguredDataInsightCatalogInput;
-  readonly inspectorConfig: TaskInspectorConfigInput;
-  readonly supervisorConfig: Scalars['JSON'];
+  actorId: Scalars['ID'];
+  configuredCatalog: ConfiguredDataInsightCatalogInput;
+  inspectorConfig: TaskInspectorConfigInput;
+  supervisorConfig: Scalars['JSON'];
 };
 
 export type TaskInspectorConfig = {
-  readonly __typename?: 'TaskInspectorConfig';
-  readonly enabledDataTagIds: ReadonlyArray<Scalars['ID']>;
+  __typename?: 'TaskInspectorConfig';
+  enabledDataTagIds: Array<Scalars['ID']>;
 };
 
 export type TaskInspectorConfigInput = {
-  readonly enabledDataTagIds: ReadonlyArray<Scalars['ID']>;
+  enabledDataTagIds: Array<Scalars['ID']>;
 };
 
 export type TaskLog = {
-  readonly __typename?: 'TaskLog';
-  readonly eventDate: Scalars['Timestamp'];
-  readonly id: Scalars['ID'];
-  readonly level: LogLevel;
-  readonly message: Scalars['String'];
-  readonly taskId: Scalars['ID'];
-  readonly taskRunId: Scalars['ID'];
+  __typename?: 'TaskLog';
+  eventDate: Scalars['Timestamp'];
+  id: Scalars['ID'];
+  level: LogLevel;
+  message: Scalars['String'];
+  taskId: Scalars['ID'];
+  taskRunId: Scalars['ID'];
 };
 
 export type TaskLogPage = {
-  readonly __typename?: 'TaskLogPage';
-  readonly items: Maybe<ReadonlyArray<TaskLog>>;
+  __typename?: 'TaskLogPage';
+  items?: Maybe<Array<TaskLog>>;
   /**  当继续分页查询时, 应当传入的 after 的值 */
-  readonly nextAfter: Scalars['ID'];
+  nextAfter: Scalars['ID'];
 };
 
 export type TaskRun = {
-  readonly __typename?: 'TaskRun';
-  readonly errorMessage: Maybe<Scalars['String']>;
-  readonly id: Scalars['ID'];
+  __typename?: 'TaskRun';
+  errorMessage?: Maybe<Scalars['String']>;
+  id: Scalars['ID'];
   /**
    *  任务日志, 此项比较慢, 仅必要时才应查询此项
    *  first: 返回满足条件的前N个结果
    *  after: 用于分页查询, 返回指定结果之后的结果
    */
-  readonly logs: TaskLogPage;
-  readonly state: TaskRunState;
-  readonly taskId: Scalars['ID'];
+  logs: TaskLogPage;
+  state: TaskRunState;
+  taskId: Scalars['ID'];
 };
 
 
 export type TaskRunLogsArgs = {
-  after: InputMaybe<Scalars['ID']>;
+  after?: InputMaybe<Scalars['ID']>;
   first: Scalars['Int'];
 };
 
 export type TaskRunConnectorPerStreamState = {
-  readonly __typename?: 'TaskRunConnectorPerStreamState';
-  readonly state: Maybe<Scalars['JSON']>;
-  readonly stream: Scalars['String'];
+  __typename?: 'TaskRunConnectorPerStreamState';
+  state?: Maybe<Scalars['JSON']>;
+  stream: Scalars['String'];
 };
 
 export type TaskRunConnectorState = {
-  readonly __typename?: 'TaskRunConnectorState';
-  readonly sharedState: Maybe<Scalars['JSON']>;
-  readonly streamStates: ReadonlyArray<TaskRunConnectorPerStreamState>;
-  readonly type: TaskRunConnectorStateType;
+  __typename?: 'TaskRunConnectorState';
+  sharedState?: Maybe<Scalars['JSON']>;
+  streamStates: Array<TaskRunConnectorPerStreamState>;
+  type: TaskRunConnectorStateType;
 };
 
-export type TaskRunConnectorStateType =
-  | 'GLOBAL'
-  | 'STREAM';
+export enum TaskRunConnectorStateType {
+  Global = 'GLOBAL',
+  Stream = 'STREAM'
+}
 
-export type TaskRunState =
-  | 'ERROR'
-  | 'PAUSED'
-  | 'READY'
-  | 'RUNNING'
-  | 'SUCCESS';
+export enum TaskRunState {
+  Error = 'ERROR',
+  Paused = 'PAUSED',
+  Ready = 'READY',
+  Running = 'RUNNING',
+  Success = 'SUCCESS'
+}
 
 export type TaskRunsPage = {
-  readonly __typename?: 'TaskRunsPage';
-  readonly items: ReadonlyArray<TaskRun>;
-  readonly total: Scalars['Long'];
+  __typename?: 'TaskRunsPage';
+  items: Array<TaskRun>;
+  total: Scalars['Long'];
 };
 
-export type TaskState =
-  | 'DELETE_PENDING'
-  | 'INIT'
-  | 'PAUSED'
-  | 'READY'
-  | 'RUNNING';
+export enum TaskState {
+  DeletePending = 'DELETE_PENDING',
+  Init = 'INIT',
+  Paused = 'PAUSED',
+  Ready = 'READY',
+  Running = 'RUNNING'
+}
 
 export type TaskStreamCounter = {
-  readonly __typename?: 'TaskStreamCounter';
-  readonly counters: ReadonlyArray<TaskCounterItem>;
-  readonly id: Scalars['ID'];
-  readonly stream: Scalars['String'];
+  __typename?: 'TaskStreamCounter';
+  counters: Array<TaskCounterItem>;
+  id: Scalars['ID'];
+  stream: Scalars['String'];
 };
 
 export type TaskStreamPropertyCounter = {
-  readonly __typename?: 'TaskStreamPropertyCounter';
-  readonly counters: ReadonlyArray<TaskCounterItem>;
-  readonly id: Scalars['ID'];
-  readonly property: Scalars['String'];
-  readonly stream: Scalars['String'];
+  __typename?: 'TaskStreamPropertyCounter';
+  counters: Array<TaskCounterItem>;
+  id: Scalars['ID'];
+  property: Scalars['String'];
+  stream: Scalars['String'];
 };
 
 export type TasksPage = {
-  readonly __typename?: 'TasksPage';
-  readonly items: ReadonlyArray<Task>;
-  readonly total: Scalars['Long'];
+  __typename?: 'TasksPage';
+  items: Array<Task>;
+  total: Scalars['Long'];
 };

@@ -1,21 +1,26 @@
 # 文档 https://the-guild.dev/graphql/codegen/docs/config-reference/codegen-config
 schema:
   - ${DATAINSIGHT_SERVER_ENDPOINT}graphql
-overwrite: true
-config:
-  resolvers: false
+#overwrite: true
+#config:
+#  resolvers: false
 #documents:
 #  - src/app/core/graphql/*.graphql
 generates:
   src/app/core/type/graphql-type.ts:
     config:
-      noNamespaces: true
-      resolvers: false
-      enumsAsTypes: true
-      avoidOptionals: true
-      immutableTypes: true
+#      noNamespaces: true
+#      resolvers: false
+#      enumsAsTypes: true
+#      avoidOptionals: true
+#      immutableTypes: true
       scalars:
         Long: number
+        JSON: string
+        Timestamp: string
+
+
+
     plugins:
       - typescript
       - typescript-operations
