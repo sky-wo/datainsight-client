@@ -2,8 +2,6 @@
 schema:
   - ${DATAINSIGHT_SERVER_ENDPOINT}graphql
 #overwrite: true
-#config:
-#  resolvers: false
 #documents:
 #  - src/app/core/graphql/*.graphql
 generates:
