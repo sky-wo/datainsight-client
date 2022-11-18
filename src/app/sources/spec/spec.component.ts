@@ -1,9 +1,9 @@
-import { Component, OnInit } from '@angular/core';
-import { ActivatedRoute, Router } from '@angular/router';
-import { JSONSchema7 } from 'json-schema';
-import { FormNode } from '@skywo/jsonforms'
-import { NzMessageService } from 'ng-zorro-antd/message';
-import { SourcesService } from 'src/app/core/service/sources.service';
+import {Component, OnInit} from '@angular/core';
+import {ActivatedRoute, Router} from '@angular/router';
+import {JSONSchema7} from 'json-schema';
+import {FormNode} from '@skywo/jsonforms'
+import {NzMessageService} from 'ng-zorro-antd/message';
+import {SourcesService} from 'src/app/core/service/sources.service';
 
 @Component({
   selector: 'app-spec',
@@ -25,7 +25,8 @@ export class SpecComponent implements OnInit {
     private router: Router,
     private sourcesService: SourcesService,
     private message: NzMessageService
-  ) { }
+  ) {
+  }
 
   ngOnInit(): void {
     this.connectorId = this.activateRoute.snapshot.paramMap.get("connectorId")
@@ -34,7 +35,7 @@ export class SpecComponent implements OnInit {
         {
           next: r => {
             this.name = r.connector.name
-            this.schema = r.connector.specification.connectionSpecification
+            this.schema = r.connector.specification.connectionSpecification as JSONSchema7
           },
           error: e => {
             console.error("specInit发生未知错误" + e)
@@ -43,16 +44,22 @@ export class SpecComponent implements OnInit {
       )
     }
   }
+
   onFormChange(form: FormNode | undefined) {
     this.form = form
   }
+
   submitConfig() {
     if (this.connectorId !== null) {
-      this.sourcesService.addActor({ name: this.name as string, connectorId: this.connectorId, connectorConfig: this.form?.getValue() }).subscribe(
+      this.sourcesService.addActor({
+        name: this.name as string,
+        connectorId: this.connectorId,
+        connectorConfig: this.form?.getValue()
+      }).subscribe(
         {
           next: _ => {
             //跳转回去刷新组件
-            this.router.navigate(['/frame/sources/'], { queryParams: { refresh: true } })
+            this.router.navigate(['/frame/sources/'], {queryParams: {refresh: true}})
           },
           error: e => {
             this.message.create('error', `添加出错`);
