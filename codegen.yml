@@ -11,7 +11,7 @@ generates:
     config:
       scalars:
         Long: number
-        JSON: string
+        JSON: JSONSchema7
         Timestamp: string
 
 #      noNamespaces: true
