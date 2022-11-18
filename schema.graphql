@@ -1,0 +1,323 @@
+# This file was generated based on ".graphqlconfig". Do not edit manually.
+
+schema {
+  query: Query
+  mutation: Mutation
+}
+
+directive @skipCodegen on FIELD_DEFINITION
+
+" 连接器实例"
+type Actor {
+  catalog: DataInsightCatalog!
+  connector: Connector
+  connectorConfig: JSON!
+  connectorId: ID!
+  id: ID!
+  name: String!
+}
+
+type ActorPage {
+  items: [Actor!]!
+  total: Long!
+}
+
+type ConfiguredDataInsightCatalog {
+  streams: [ConfiguredDataInsightStream!]!
+}
+
+type ConfiguredDataInsightStream {
+  cursorField: [String!]
+  destinationSyncMode: DataInsightDestinationSyncMode!
+  primaryKey: [String!]
+  stream: DataInsightStream!
+  syncMode: DataInsightSyncMode!
+}
+
+" 连接器定义"
+type Connector {
+  id: ID!
+  image: String!
+  name: String!
+  specification: ConnectorSpecification!
+  version: String!
+}
+
+type ConnectorPage {
+  items: [Connector!]!
+  total: Long!
+}
+
+type ConnectorSpecification {
+  changelogUrl: String
+  connectionSpecification: JSON!
+  documentationUrl: String
+}
+
+type DataInsightCatalog {
+  streams: [DataInsightStream!]!
+}
+
+type DataInsightStream {
+  defaultCursorField: [String!]
+  jsonSchema: JSON!
+  name: String!
+  namespace: String
+  sourceDefinedCursor: Boolean
+  sourceDefinedPrimaryKey: [String!]
+  supportedSyncModes: [DataInsightSyncMode!]
+}
+
+type DataRule {
+  content: JSON!
+  dataTagId: ID!
+  id: ID!
+}
+
+type DataRulesPage {
+  items: [DataRule!]!
+  total: Long!
+}
+
+type DataTag {
+  alert: Boolean!
+  id: ID!
+  level: Int!
+  name: String!
+  parentId: ID
+  rule(id: ID!): DataRule!
+  rules(first: Int!, skip: Long! = 0): DataRulesPage!
+}
+
+type DataTagsPage {
+  items: [DataTag!]!
+  total: Long!
+}
+
+type Mutation {
+  addActor(actorInput: ActorInput!): ID!
+  addConnector(connectorInput: ConnectorInput!): ID!
+  addDataRule(dataRuleInput: DataRuleInput!, dataTagId: ID!): ID!
+  addDataTag(dataTagInput: DataTagInput!, parentId: ID): ID!
+  addTask(taskInput: TaskInput!): ID!
+  cancelTask(id: ID!): Int!
+  moveDataRule(dataRuleId: ID!, dataTagId: ID!, newDataTagId: ID!): Int!
+  moveDataTag(dataTagId: ID!, newParentId: ID): Int
+  removeActor(id: ID!): Int!
+  removeConnector(id: ID!): Int!
+  removeTask(id: ID!): Int!
+  startTask(id: ID!): Int!
+}
+
+type Query {
+  actor(id: ID!): Actor!
+  actors(first: Int!, skip: Long! = 0): ActorPage!
+  connector(id: ID!): Connector!
+  connectors(first: Int!, skip: Long! = 0): ConnectorPage!
+  dataTag(id: ID!): DataTag!
+  " 查询所有的数据标签"
+  dataTags(first: Int!, skip: Long! = 0): DataTagsPage!
+  task(id: ID!): Task!
+  tasks(first: Int!, skip: Long! = 0): TasksPage!
+}
+
+type Task {
+  actor: Actor!
+  actorId: ID!
+  configuredCatalog: ConfiguredDataInsightCatalog!
+  " 保存的连接器的状态, 此项比较慢, 仅必要时才应查询此项"
+  connectorState: TaskRunConnectorState
+  " 任务计数器, 此项比较慢, 仅必要时才应查询此项"
+  counter: TaskCounter
+  id: ID!
+  inspectorConfig: TaskInspectorConfig!
+  state: TaskState!
+  supervisorConfig: JSON!
+  taskRun(id: ID!): TaskRun!
+  taskRuns(first: Int!, skip: Long! = 0): TaskRunsPage
+}
+
+" 任务计数器"
+type TaskCounter {
+  id: ID!
+  " 流属性计数器, 比较慢, 非必要不要取"
+  streamProperties: [TaskStreamPropertyCounter!]!
+  " 流计数器, 比较慢, 非必要不要取"
+  streams: [TaskStreamCounter!]!
+}
+
+type TaskCounterItem {
+  name: String!
+  value: Long!
+}
+
+type TaskInspectorConfig {
+  enabledDataTagIds: [ID!]!
+}
+
+type TaskLog {
+  eventDate: Timestamp!
+  id: ID!
+  level: LogLevel!
+  message: String!
+  taskId: ID!
+  taskRunId: ID!
+}
+
+type TaskLogPage {
+  items: [TaskLog!]
+  " 当继续分页查询时, 应当传入的 after 的值"
+  nextAfter: ID!
+}
+
+type TaskRun {
+  errorMessage: String
+  id: ID!
+  """
+
+  任务日志, 此项比较慢, 仅必要时才应查询此项
+  first: 返回满足条件的前N个结果
+  after: 用于分页查询, 返回指定结果之后的结果
+  """
+  logs(after: ID, first: Int!): TaskLogPage!
+  state: TaskRunState!
+  taskId: ID!
+}
+
+type TaskRunConnectorPerStreamState {
+  state: JSON
+  stream: String!
+}
+
+type TaskRunConnectorState {
+  sharedState: JSON
+  streamStates: [TaskRunConnectorPerStreamState!]!
+  type: TaskRunConnectorStateType!
+}
+
+type TaskRunsPage {
+  items: [TaskRun!]!
+  total: Long!
+}
+
+type TaskStreamCounter {
+  counters: [TaskCounterItem!]!
+  id: ID!
+  stream: String!
+}
+
+type TaskStreamPropertyCounter {
+  counters: [TaskCounterItem!]!
+  id: ID!
+  property: String!
+  stream: String!
+}
+
+type TasksPage {
+  items: [Task!]!
+  total: Long!
+}
+
+enum DataInsightDestinationSyncMode {
+  APPEND
+  DEDUP
+  OVERWRITE
+}
+
+enum DataInsightSyncMode {
+  FULL_REFRESH
+  INCREMENTAL
+}
+
+enum LogLevel {
+  DEBUG
+  ERROR
+  INFO
+  TRACE
+  WARN
+}
+
+enum TaskRunConnectorStateType {
+  GLOBAL
+  STREAM
+}
+
+enum TaskRunState {
+  ERROR
+  PAUSED
+  READY
+  RUNNING
+  SUCCESS
+}
+
+enum TaskState {
+  DELETE_PENDING
+  INIT
+  PAUSED
+  READY
+  RUNNING
+}
+
+"任意 JSON 对象"
+scalar JSON
+
+"A 64-bit signed integer"
+scalar Long
+
+"事件戳, 从1970-1-1起的毫秒数"
+scalar Timestamp
+
+input ActorInput {
+  connectorConfig: JSON!
+  connectorId: ID!
+  name: String!
+}
+
+input ConfiguredDataInsightCatalogInput {
+  streams: [ConfiguredDataInsightStreamInput!]!
+}
+
+input ConfiguredDataInsightStreamInput {
+  cursorField: [String!]
+  destinationSyncMode: DataInsightDestinationSyncMode!
+  primaryKey: [String!]
+  stream: DataInsightStreamInput!
+  syncMode: DataInsightSyncMode!
+}
+
+input ConnectorInput {
+  image: String!
+  name: String!
+  version: String!
+}
+
+input DataInsightStreamInput {
+  defaultCursorField: [String!]
+  jsonSchema: JSON!
+  name: String!
+  namespace: String
+  sourceDefinedCursor: Boolean
+  sourceDefinedPrimaryKey: [String!]
+  supportedSyncModes: [DataInsightSyncMode!]
+}
+
+input DataRuleInput {
+  content: JSON!
+}
+
+input DataTagInput {
+  alert: Boolean!
+  level: Int!
+  name: String!
+}
+
+input TaskInput {
+  actorId: ID!
+  configuredCatalog: ConfiguredDataInsightCatalogInput!
+  inspectorConfig: TaskInspectorConfigInput!
+  supervisorConfig: JSON!
+}
+
+input TaskInspectorConfigInput {
+  enabledDataTagIds: [ID!]!
+}
