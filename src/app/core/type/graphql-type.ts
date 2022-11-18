@@ -1,6 +1,4 @@
 import { gql } from 'apollo-angular';
-import { Injectable } from '@angular/core';
-import * as Apollo from 'apollo-angular';
 export type Maybe<T> = T | null;
 export type InputMaybe<T> = Maybe<T>;
 export type Exact<T extends { [key: string]: unknown }> = { [K in keyof T]: T[K] };
@@ -24,6 +22,7 @@ export type Scalars = {
 /**  连接器实例 */
 export type Actor = {
   readonly __typename?: 'Actor';
+  readonly catalog: DataInsightCatalog;
   readonly connector: Maybe<Connector>;
   readonly connectorConfig: Scalars['JSON'];
   readonly connectorId: Scalars['ID'];
@@ -98,8 +97,14 @@ export type ConnectorSpecification = {
   readonly documentationUrl: Maybe<Scalars['String']>;
 };
 
+export type DataInsightCatalog = {
+  readonly __typename?: 'DataInsightCatalog';
+  readonly streams: ReadonlyArray<DataInsightStream>;
+};
+
 export type DataInsightDestinationSyncMode =
   | 'APPEND'
+  | 'DEDUP'
   | 'OVERWRITE';
 
 export type DataInsightStream = {
@@ -328,6 +333,10 @@ export type Task = {
   readonly actor: Actor;
   readonly actorId: Scalars['ID'];
   readonly configuredCatalog: ConfiguredDataInsightCatalog;
+  /**  保存的连接器的状态, 此项比较慢, 仅必要时才应查询此项 */
+  readonly connectorState: Maybe<TaskRunConnectorState>;
+  /**  任务计数器, 此项比较慢, 仅必要时才应查询此项 */
+  readonly counter: Maybe<TaskCounter>;
   readonly id: Scalars['ID'];
   readonly inspectorConfig: TaskInspectorConfig;
   readonly state: TaskState;
@@ -350,12 +359,11 @@ export type TaskTaskRunsArgs = {
 /**  任务计数器 */
 export type TaskCounter = {
   readonly __typename?: 'TaskCounter';
-  /**  全局计数器 */
-  readonly items: ReadonlyArray<TaskCounterItem>;
-  /**  流计数器 */
-  readonly streamItems: ReadonlyArray<TaskStreamCounterItem>;
-  /**  流属性计数器 */
-  readonly streamPropertyItems: ReadonlyArray<TaskStreamPropertyCounterItem>;
+  readonly id: Scalars['ID'];
+  /**  流属性计数器, 比较慢, 非必要不要取 */
+  readonly streamProperties: ReadonlyArray<TaskStreamPropertyCounter>;
+  /**  流计数器, 比较慢, 非必要不要取 */
+  readonly streams: ReadonlyArray<TaskStreamCounter>;
 };
 
 export type TaskCounterItem = {
@@ -399,10 +407,6 @@ export type TaskLogPage = {
 
 export type TaskRun = {
   readonly __typename?: 'TaskRun';
-  /**  保存的连接器的状态, 此项比较慢, 仅必要时才应查询此项 */
-  readonly connectorState: Maybe<TaskRunConnectorState>;
-  /**  任务计数器, 此项比较慢, 仅必要时才应查询此项 */
-  readonly counter: Maybe<TaskCounter>;
   readonly errorMessage: Maybe<Scalars['String']>;
   readonly id: Scalars['ID'];
   /**
@@ -430,8 +434,13 @@ export type TaskRunConnectorPerStreamState = {
 export type TaskRunConnectorState = {
   readonly __typename?: 'TaskRunConnectorState';
   readonly sharedState: Maybe<Scalars['JSON']>;
-  readonly streamStates: Maybe<ReadonlyArray<TaskRunConnectorPerStreamState>>;
+  readonly streamStates: ReadonlyArray<TaskRunConnectorPerStreamState>;
+  readonly type: TaskRunConnectorStateType;
 };
+
+export type TaskRunConnectorStateType =
+  | 'GLOBAL'
+  | 'STREAM';
 
 export type TaskRunState =
   | 'ERROR'
@@ -453,19 +462,19 @@ export type TaskState =
   | 'READY'
   | 'RUNNING';
 
-export type TaskStreamCounterItem = {
-  readonly __typename?: 'TaskStreamCounterItem';
-  readonly name: Scalars['String'];
+export type TaskStreamCounter = {
+  readonly __typename?: 'TaskStreamCounter';
+  readonly counters: ReadonlyArray<TaskCounterItem>;
+  readonly id: Scalars['ID'];
   readonly stream: Scalars['String'];
-  readonly value: Scalars['Long'];
 };
 
-export type TaskStreamPropertyCounterItem = {
-  readonly __typename?: 'TaskStreamPropertyCounterItem';
-  readonly name: Scalars['String'];
+export type TaskStreamPropertyCounter = {
+  readonly __typename?: 'TaskStreamPropertyCounter';
+  readonly counters: ReadonlyArray<TaskCounterItem>;
+  readonly id: Scalars['ID'];
   readonly property: Scalars['String'];
   readonly stream: Scalars['String'];
-  readonly value: Scalars['Long'];
 };
 
 export type TasksPage = {
@@ -473,112 +482,3 @@ export type TasksPage = {
   readonly items: ReadonlyArray<Task>;
   readonly total: Scalars['Long'];
 };
-
-export type Actor_MutationVariables = Exact<{
-  actorInput: ActorInput;
-}>;
-
-
-export type Actor_Mutation = { readonly __typename?: 'Mutation', readonly addActor: string };
-
-export type AddConnector_MutationVariables = Exact<{
-  connectorInput: ConnectorInput;
-}>;
-
-
-export type AddConnector_Mutation = { readonly __typename?: 'Mutation', readonly addConnector: string };
-
-export type Connector_QueryVariables = Exact<{
-  id: Scalars['ID'];
-}>;
-
-
-export type Connector_Query = { readonly __typename?: 'Query', readonly connector: { readonly __typename?: 'Connector', readonly name: string, readonly specification: { readonly __typename?: 'ConnectorSpecification', readonly documentationUrl: string | null, readonly changelogUrl: string | null, readonly connectionSpecification: any } } };
-
-export type Connectors_QueryVariables = Exact<{
-  first: Scalars['Int'];
-  skip: Scalars['Long'];
-}>;
-
-
-export type Connectors_Query = { readonly __typename?: 'Query', readonly connectors: { readonly __typename?: 'ConnectorPage', readonly total: number, readonly items: ReadonlyArray<{ readonly __typename?: 'Connector', readonly name: string, readonly image: string, readonly version: string }> } };
-
-export const ADDACROR = gql`
-    mutation ($actorInput: ActorInput!) {
-  addActor(actorInput: $actorInput)
-}
-    `;
-
-@Injectable({
-  providedIn: 'root'
-})
-export class MutationAddActor extends Apollo.Mutation<Actor_Mutation, Actor_MutationVariables> {
-  override document = ADDACROR;
-
-  constructor(apollo: Apollo.Apollo) {
-    super(apollo);
-  }
-}
-export const ADDCONNECTOR = gql`
-    mutation ($connectorInput: ConnectorInput!) {
-  addConnector(connectorInput: $connectorInput)
-}
-    `;
-
-@Injectable({
-  providedIn: 'root'
-})
-export class MutationAddConnector extends Apollo.Mutation<AddConnector_Mutation, AddConnector_MutationVariables> {
-  override document = ADDCONNECTOR;
-
-  constructor(apollo: Apollo.Apollo) {
-    super(apollo);
-  }
-}
-export const CONNECTOR = gql`
-    query ($id: ID!) {
-  connector(id: $id) {
-    name
-    specification {
-      documentationUrl
-      changelogUrl
-      connectionSpecification
-    }
-  }
-}
-    `;
-
-@Injectable({
-  providedIn: 'root'
-})
-export class QueryConnector extends Apollo.Query<Connector_Query, Connector_QueryVariables> {
-  override document = CONNECTOR;
-
-  constructor(apollo: Apollo.Apollo) {
-    super(apollo);
-  }
-}
-export const CONNECTORS = gql`
-    query ($first: Int!, $skip: Long!) {
-      connectors(first: $first, skip: $skip) {
-    total
-    items {
-      id
-      name
-      image
-      version
-    }
-  }
-}
-    `;
-
-@Injectable({
-  providedIn: 'root'
-})
-export class QueryConnectors extends Apollo.Query<Connectors_Query, Connectors_QueryVariables> {
-  override document = CONNECTORS;
-
-  constructor(apollo: Apollo.Apollo) {
-    super(apollo);
-  }
-}
