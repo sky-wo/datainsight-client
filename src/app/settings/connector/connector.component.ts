@@ -100,4 +100,10 @@ export class ConnectorComponent implements OnInit {
       });
     }
   }
+
+  // ngOnDestroy() {
+  //   this.querySubscription.unsubscribe();
+  // }
+
+
 }

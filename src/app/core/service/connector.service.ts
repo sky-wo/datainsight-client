@@ -16,14 +16,14 @@ export class ConnectorService {
    * @return  id
    * */
   addConnector(connectorInput: ConnectorInput): Observable<MutationResult<string>> {
-    return this.apollo.mutate<string, { connectorInput: ConnectorInput }>({
+    return this.apollo.mutate({
       mutation: gql`
         mutation addConnector($connectorInput: ConnectorInput!) {
           addConnector(connectorInput: $connectorInput)
         }
       `,
       variables: {
-        connectorInput: connectorInput
+        connectorInput
       }
     })
   }
@@ -32,20 +32,20 @@ export class ConnectorService {
    * @return  1
    * */
   removeConnectorById(id: string): Observable<MutationResult<number>> {
-    return this.apollo.mutate<number, { id: string }>({
+    return this.apollo.mutate({
       mutation: gql`
         mutation removeConnectorById($id: ID!) {
           removeConnector(id: $id)
         }
       `,
       variables: {
-        id: id
+        id
       }
     })
   }
 
   queryConnectorById(id: string): QueryRef<{ connector: Connector }, { id: string }> {
-    return this.apollo.watchQuery<{ connector: Connector }, { id: string }>({
+    return this.apollo.watchQuery({
       query: gql`
         query($id: ID!) {
           connector(id: $id) {
@@ -62,13 +62,14 @@ export class ConnectorService {
         }
       `,
       variables: {
-        id: id
+        id
       }
     })
   }
 
+
   pagingQueryConnectors(first: number, skip: number): QueryRef<{ connectors: ConnectorPage }, { first: number, skip: number }> {
-    return this.apollo.watchQuery<{ connectors: ConnectorPage }, { first: number, skip: number }>({
+    return this.apollo.watchQuery({
       query: gql`
         query ($first: Int!, $skip: Long!) {
           connectors(first: $first, skip: $skip) {
@@ -78,13 +79,18 @@ export class ConnectorService {
               name
               image
               version
+              specification {
+                documentationUrl
+                changelogUrl
+                connectionSpecification
+              }
             }
           }
         }
       `,
       variables: {
-        first: first,
-        skip: skip
+        first,
+        skip
       }
     })
   }
