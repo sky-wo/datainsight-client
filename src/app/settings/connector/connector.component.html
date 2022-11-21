@@ -1,9 +1,9 @@
 <button nz-button nzType="primary" (click)="showModal()">
-    <span>添加源</span>
+    <span>添加镜像</span>
 </button>
 <nz-modal [(nzVisible)]="isVisible" nzTitle="Modal Title" (nzOnCancel)="handleCancel()" (nzOnOk)="submitForm()"
     [nzOkLoading]="isOkLoading">
-    <nz-card *nzModalContent nzTitle="添加源">
+    <nz-card *nzModalContent nzTitle="添加镜像">
         <form nz-form [formGroup]="validateForm" (submit)="submitForm()">
             <nz-form-item>
                 <nz-form-label [nzSpan]="4" nzRequired nzFor="name">镜像名称</nz-form-label>

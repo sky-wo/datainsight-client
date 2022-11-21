@@ -25,16 +25,15 @@ export class ActorListComponent implements OnInit {
   }
 
   ngOnInit(): void {
-
-    this.actors(this.pageSize, (this.pageIndex - 1) * this.pageSize)
+    this.actors(this.pageSize, 0)
   }
 
   actors(first: number, skip: number) {
     this.actorService.pagingQueryActors(first, skip).valueChanges.subscribe(
       {
         next: r => {
-          this.listOfData = r.data.actorPage.items
-          this.totalData = r.data.actorPage.total
+          this.listOfData =r.data.actors.items
+          this.totalData = r.data.actors.total
         },
         error: e => {
           console.error("connectors发生位置错误" + e)

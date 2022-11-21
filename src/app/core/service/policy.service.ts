@@ -1,6 +1,6 @@
 import {Injectable} from '@angular/core';
 import {Apollo, gql, MutationResult, QueryRef} from "apollo-angular";
-import {DataRuleInput, DataTag, DataTagInput} from "../type/graphql-type";
+import {DataRuleInput, DataTag, DataTagInput, DataTagsPage} from "../type/graphql-type";
 import {Observable} from "rxjs";
 
 @Injectable({
@@ -103,6 +103,37 @@ export class PolicyService {
       `,
       variables: {
         id
+      }
+    })
+  }
+
+  pagingQueryDataTags(first: number, skip: number): QueryRef<{ dataTags: DataTagsPage }, { first: number, skip: number }> {
+    return this.apollo.watchQuery({
+      query: gql`
+        query ($first: Int!, $skip: Long!) {
+          dataTags(first: $first, skip: $skip) {
+            total
+            items {
+              alert
+              id
+              level
+              name
+              parentId
+              rules(first: 100, skip: 0) {
+                items{
+                  content
+                  dataTagId
+                  id
+                }
+                total
+              }
+            }
+          }
+        }
+      `,
+      variables: {
+        first,
+        skip
       }
     })
   }

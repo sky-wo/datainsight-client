@@ -11,7 +11,6 @@ export class ActorService {
   constructor(private apollo: Apollo) {
   }
 
-
   /**
    * @return  id
    * */
@@ -43,6 +42,8 @@ export class ActorService {
       }
     })
   }
+
+
 
   queryActorById(id: string): QueryRef<{ actor: Actor }, { id: string }> {
     return this.apollo.watchQuery({
@@ -84,8 +85,7 @@ export class ActorService {
     })
   }
 
-
-  pagingQueryActors(first: number, skip: number): QueryRef<{ actorPage: ActorPage }, { first: number, skip: number }> {
+  pagingQueryActors(first: number, skip: number): QueryRef<{ actors: ActorPage }, { first: number, skip: number }> {
     return this.apollo.watchQuery({
       query: gql`
         query ($first: Int!, $skip: Long!) {
@@ -128,6 +128,7 @@ export class ActorService {
       }
     })
   }
+
 
 
 }
