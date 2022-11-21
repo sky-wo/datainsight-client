@@ -7,13 +7,13 @@
 
         <li nz-menu-item>
           <span nz-icon nzType="file"></span>
-          <span>概览</span>
+          <a [routerLink]="['/frame/dashboard']" routerLinkActive="active">概览</a>
         </li>
 
         <li nz-submenu nzTitle="任务" nzIcon="user">
           <ul>
             <li nz-menu-item>
-              <a [routerLink]="['/frame/sources']" routerLinkActive="active">源</a>
+              <a [routerLink]="['/frame/task']" routerLinkActive="active">创建任务</a>
             </li>
           </ul>
         </li>

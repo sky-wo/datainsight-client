@@ -13,8 +13,12 @@ const routes: Routes = [
     component: FrameComponent,
     children: [
       {
-        path: "sources",
-        loadChildren: () => import("./sources/sources.module").then(m => m.SourcesModule)
+        path: "dashboard",
+        loadChildren: () => import("./dashboard/dashboard.module").then(m => m.DashboardModule)
+      },
+      {
+        path: "task",
+        loadChildren: () => import("./task/task.module").then(m => m.TaskModule)
       },
       {
         path: "settings",
