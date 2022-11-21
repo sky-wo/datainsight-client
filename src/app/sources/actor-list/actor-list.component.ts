@@ -32,7 +32,7 @@ export class ActorListComponent implements OnInit {
     this.actorService.pagingQueryActors(first, skip).valueChanges.subscribe(
       {
         next: r => {
-          this.listOfData =r.data.actors.items
+          this.listOfData = r.data.actors.items
           this.totalData = r.data.actors.total
         },
         error: e => {

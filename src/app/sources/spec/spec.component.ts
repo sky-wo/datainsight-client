@@ -25,8 +25,7 @@ export class SpecComponent implements OnInit {
     private activateRoute: ActivatedRoute,
     private router: Router,
     private actorService: ActorService,
-
-    private  connectorService: ConnectorService,
+    private connectorService: ConnectorService,
     private message: NzMessageService
   ) {
   }

@@ -1,7 +1,7 @@
 <nz-card nzTitle="添加源">
-    <nz-select [(ngModel)]="selectChoose">
-        <nz-option *ngFor="let connector of this.dataList" [nzValue]="connector.id" [nzLabel]="connector.name">
-        </nz-option>
-    </nz-select>
-    <button nz-button nzType="primary" (click)="nextChoose()">下一步</button>
+  <nz-select [(ngModel)]="selectChoose">
+    <nz-option *ngFor="let connector of this.dataList" [nzValue]="connector.id" [nzLabel]="connector.name">
+    </nz-option>
+  </nz-select>
+  <button nz-button nzType="primary" (click)="nextChoose()">下一步</button>
 </nz-card>
