@@ -3,7 +3,8 @@ import {ActivatedRoute, Router} from '@angular/router';
 import {JSONSchema7} from 'json-schema';
 import {FormNode} from '@skywo/jsonforms'
 import {NzMessageService} from 'ng-zorro-antd/message';
-import {SourcesService} from 'src/app/core/service/sources.service';
+import {ConnectorService} from "../../core/service/connector.service";
+import {ActorService} from "../../core/service/actor.service";
 
 @Component({
   selector: 'app-spec',
@@ -23,7 +24,9 @@ export class SpecComponent implements OnInit {
   constructor(
     private activateRoute: ActivatedRoute,
     private router: Router,
-    private sourcesService: SourcesService,
+    private actorService: ActorService,
+
+    private  connectorService: ConnectorService,
     private message: NzMessageService
   ) {
   }
@@ -31,11 +34,11 @@ export class SpecComponent implements OnInit {
   ngOnInit(): void {
     this.connectorId = this.activateRoute.snapshot.paramMap.get("connectorId")
     if (this.connectorId) {
-      this.sourcesService.connector(this.connectorId).subscribe(
+      this.connectorService.queryConnectorById(this.connectorId).valueChanges.subscribe(
         {
           next: r => {
-            this.name = r.connector.name
-            this.schema = r.connector.specification.connectionSpecification as JSONSchema7
+            this.name = r.data.connector.name
+            this.schema = r.data.connector.specification.connectionSpecification as JSONSchema7
           },
           error: e => {
             console.error("specInit发生未知错误" + e)
@@ -51,7 +54,7 @@ export class SpecComponent implements OnInit {
 
   submitConfig() {
     if (this.connectorId !== null) {
-      this.sourcesService.addActor({
+      this.actorService.addActor({
         name: this.name as string,
         connectorId: this.connectorId,
         connectorConfig: this.form?.getValue()

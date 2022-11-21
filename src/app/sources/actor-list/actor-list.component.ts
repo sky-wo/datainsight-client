@@ -1,7 +1,7 @@
-import { Component, OnInit } from '@angular/core';
-import { ActivatedRoute } from '@angular/router';
-import { SourcesService } from 'src/app/core/service/sources.service';
-import { Actor } from 'src/app/core/type/graphql-type';
+import {Component, OnInit} from '@angular/core';
+import {ActivatedRoute} from '@angular/router';
+import {Actor} from 'src/app/core/type/graphql-type';
+import {ActorService} from "../../core/service/actor.service";
 
 
 @Component({
@@ -15,10 +15,11 @@ export class ActorListComponent implements OnInit {
   pageIndex: number = 1
   pageSize: number = 10
   totalData: number = 0
-  constructor(private activeRoute: ActivatedRoute, private sourcesService: SourcesService) {
+
+  constructor(private activeRoute: ActivatedRoute, private actorService: ActorService) {
     this.activeRoute.queryParams.subscribe(r => {
       if (r) {
-        this.sourcesService.actors(this.pageSize, (this.pageIndex - 1) * this.pageSize).refetch()
+        this.actorService.pagingQueryActors(this.pageSize, (this.pageIndex - 1) * this.pageSize).refetch()
       }
     })
   }
@@ -27,12 +28,13 @@ export class ActorListComponent implements OnInit {
 
     this.actors(this.pageSize, (this.pageIndex - 1) * this.pageSize)
   }
+
   actors(first: number, skip: number) {
-    this.sourcesService.actors(first, skip).valueChanges.subscribe(
+    this.actorService.pagingQueryActors(first, skip).valueChanges.subscribe(
       {
         next: r => {
-          this.listOfData = r.data.actors.items
-          this.totalData = r.data.actors.total
+          this.listOfData = r.data.actorPage.items
+          this.totalData = r.data.actorPage.total
         },
         error: e => {
           console.error("connectors发生位置错误" + e)
@@ -40,6 +42,7 @@ export class ActorListComponent implements OnInit {
       }
     )
   }
+
   pageChange() {
     this.actors(this.pageSize, (this.pageIndex - 1) * this.pageSize)
   }

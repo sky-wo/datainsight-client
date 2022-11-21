@@ -14,6 +14,9 @@ generates:
         JSON: string
         Timestamp: string
 
+
+# TODO 自动生成的 TaskLogPage 含有 maybe类型
+
 #      noNamespaces: true
 #      resolvers: false
 #      enumsAsTypes: true

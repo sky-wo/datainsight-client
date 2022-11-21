@@ -18,7 +18,7 @@ export class ConnectorService {
   addConnector(connectorInput: ConnectorInput): Observable<MutationResult<string>> {
     return this.apollo.mutate({
       mutation: gql`
-        mutation addConnector($connectorInput: ConnectorInput!) {
+        mutation ($connectorInput: ConnectorInput!) {
           addConnector(connectorInput: $connectorInput)
         }
       `,
@@ -34,7 +34,7 @@ export class ConnectorService {
   removeConnectorById(id: string): Observable<MutationResult<number>> {
     return this.apollo.mutate({
       mutation: gql`
-        mutation removeConnectorById($id: ID!) {
+        mutation ($id: ID!) {
           removeConnector(id: $id)
         }
       `,
