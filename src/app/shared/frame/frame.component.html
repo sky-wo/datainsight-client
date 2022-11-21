@@ -10,7 +10,7 @@
           <span>概览</span>
         </li>
 
-        <li nz-submenu nzTitle="User" nzIcon="user">
+        <li nz-submenu nzTitle="任务" nzIcon="user">
           <ul>
             <li nz-menu-item>
               <a [routerLink]="['/frame/sources']" routerLinkActive="active">源</a>
@@ -24,7 +24,7 @@
               <a [routerLink]="['/frame/settings/frameSettings/connector']" routerLinkActive="active">连接器设置</a>
             </li>
             <li nz-menu-item>
-              Actor 实例
+              <a [routerLink]="['/frame/settings/frameSettings/actor']" routerLinkActive="active">Actor 实例</a>
             </li>
           </ul>
         </li>

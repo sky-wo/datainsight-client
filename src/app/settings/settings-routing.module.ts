@@ -16,9 +16,14 @@ const routes: Routes = [
         path: "connector",
         loadChildren: () => import("./connector/connector.module").then(m => m.ConnectorModule)
       },
+      {
+        path: "actor",
+        loadChildren: () => import("./actor/actor.module").then(m => m.ActorModule)
+      },
     ]
   }
 ];
+
 
 @NgModule({
   imports: [RouterModule.forChild(routes)],
