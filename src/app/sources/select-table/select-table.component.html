@@ -1,0 +1,22 @@
+<nz-table #rowSelectionTable nzShowSizeChanger [nzData]="listOfData"
+    (nzCurrentPageDataChange)="onCurrentPageDataChange($event)">
+    <thead>
+        <tr>
+            <th [(nzChecked)]="checked" [nzIndeterminate]="indeterminate" (nzCheckedChange)="onAllChecked($event)"></th>
+            <th>表名</th>
+            <th>namespace</th>
+            <th>Address</th>
+            <th>sourceDefinedCursor</th>
+            <th>主键</th>
+            <th>supportedSyncModes</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr *ngFor="let data of rowSelectionTable.data">
+            <td [nzChecked]="setOfCheckedId.has(data.id)" (nzCheckedChange)="onItemChecked(data.id, $event)"></td>
+            <td>{{ data.name }}</td>
+            <td>{{ data.age }}</td>
+            <td>{{ data.address }}</td>
+        </tr>
+    </tbody>
+</nz-table>

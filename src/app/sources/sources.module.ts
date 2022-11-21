@@ -9,12 +9,14 @@ import { AddActorComponent } from './add-actor/add-actor.component';
 import { ActorListComponent } from './actor-list/actor-list.component'
 import { JsonformsModule } from '@skywo/jsonforms';
 import { JsonformsrenderZorroModule } from '@skywo/jsonformsrenderzorro';
+import { SelectTableComponent } from './select-table/select-table.component';
 @NgModule({
   declarations: [
     SourcesComponent,
     SpecComponent,
     AddActorComponent,
-    ActorListComponent
+    ActorListComponent,
+    SelectTableComponent,
   ],
   imports: [
     CommonModule,

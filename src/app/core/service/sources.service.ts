@@ -1,7 +1,8 @@
-import {Injectable} from '@angular/core';
-import {Apollo, gql, MutationResult, QueryRef} from 'apollo-angular';
-import {map, Observable} from 'rxjs';
-import {ActorInput, ActorPage, Connector, ConnectorPage} from '../type/graphql-type';
+import { query } from '@angular/animations';
+import { Injectable } from '@angular/core';
+import { Apollo, gql, MutationResult, QueryRef } from 'apollo-angular';
+import { map, Observable } from 'rxjs';
+import { Actor, ActorInput, ActorPage, Connector, ConnectorPage } from '../type/graphql-type';
 
 @Injectable({
   providedIn: 'root'
@@ -92,5 +93,33 @@ export class SourcesService {
         actorInput: actorInput
       }
     })
+  }
+
+  actor(id: string): Observable<{ actor: Actor }> {
+    return this.apollo.query<{ actor: Actor }, { id: string }>({
+      query: gql`
+      query actor{
+       actor(id: 8){
+         id
+         name
+         connectorId
+         catalog{
+         streams{
+           name
+           jsonSchema
+           supportedSyncModes
+           sourceDefinedCursor
+           defaultCursorField
+           sourceDefinedPrimaryKey
+           namespace
+          }
+          }
+        }
+      }
+     `,
+      variables: {
+        id: id,
+      }
+    }).pipe(map(r => r.data))
   }
 }
