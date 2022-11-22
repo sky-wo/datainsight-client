@@ -21,10 +21,13 @@
         <li nz-submenu nzTitle="配置中心" nzIcon="team">
           <ul>
             <li nz-menu-item>
-              <a [routerLink]="['/frame/settings/frameSettings/connector']" routerLinkActive="active">连接器设置</a>
+              <a [routerLink]="['/frame/connector']" routerLinkActive="active">连接器配置</a>
             </li>
             <li nz-menu-item>
-              <a [routerLink]="['/frame/settings/frameSettings/actor']" routerLinkActive="active">Actor 实例</a>
+              <a [routerLink]="['/frame/actor']" routerLinkActive="active">Actor 实例</a>
+            </li>
+            <li nz-menu-item>
+              <a [routerLink]="['/frame/policy']" routerLinkActive="active">标签规则</a>
             </li>
           </ul>
         </li>

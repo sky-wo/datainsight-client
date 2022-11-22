@@ -1,7 +1,7 @@
 import {Component, OnInit} from '@angular/core';
 import {ActivatedRoute} from '@angular/router';
 import {Actor} from 'src/app/core/type/graphql-type';
-import {ActorService} from "../../../core/service/actor.service";
+import {ActorService} from "../../core/service/actor.service";
 
 
 @Component({

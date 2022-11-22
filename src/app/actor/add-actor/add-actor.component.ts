@@ -1,7 +1,7 @@
 import {Component, OnInit} from '@angular/core';
 import {Router} from '@angular/router';
 import {Connector} from 'src/app/core/type/graphql-type';
-import {ConnectorService} from "../../../core/service/connector.service";
+import {ConnectorService} from "../../core/service/connector.service";
 
 @Component({
   selector: 'app-add-connector',

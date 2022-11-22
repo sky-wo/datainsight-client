@@ -2,6 +2,7 @@
           [nzFrontPagination]="false" (nzPageIndexChange)="pageChange()">
   <thead>
   <tr>
+    <th>数据源</th>
     <th>名称</th>
     <th>镜像</th>
     <th>版本</th>
@@ -9,9 +10,15 @@
   </thead>
   <tbody>
   <tr *ngFor="let data of basicTable.data">
+<!--    <td>{{ data.connectorConfig!.username }}</td>-->
+    <td>{{ data.connectorConfig }}</td>
+    <!--    <td>{{ data.connector!.id }}</td>-->
+
     <td>{{ data.name }}</td>
     <td>{{ data.connector!.image}}</td>
     <td>{{ data.connector!.version }}</td>
+
+
   </tr>
   </tbody>
 </nz-table>

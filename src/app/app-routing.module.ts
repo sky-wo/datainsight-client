@@ -21,9 +21,17 @@ const routes: Routes = [
         loadChildren: () => import("./task/task.module").then(m => m.TaskModule)
       },
       {
-        path: "settings",
-        loadChildren: () => import("./settings/settings.module").then(m => m.SettingsModule)
-      }
+        path: "connector",
+        loadChildren: () => import("./connector/connector.module").then(m => m.ConnectorModule)
+      },
+      {
+        path: "actor",
+        loadChildren: () => import("./actor/actor.module").then(m => m.ActorModule)
+      },
+      {
+        path: "policy",
+        loadChildren: () => import("./policy/policy.module").then(m => m.PolicyModule)
+      },
     ]
   }
 ];

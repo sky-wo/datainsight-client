@@ -3,8 +3,8 @@ import {ActivatedRoute, Router} from '@angular/router';
 import {JSONSchema7} from 'json-schema';
 import {FormNode} from '@skywo/jsonforms'
 import {NzMessageService} from 'ng-zorro-antd/message';
-import {ConnectorService} from "../../../core/service/connector.service";
-import {ActorService} from "../../../core/service/actor.service";
+import {ConnectorService} from "../../core/service/connector.service";
+import {ActorService} from "../../core/service/actor.service";
 
 @Component({
   selector: 'app-spec',
