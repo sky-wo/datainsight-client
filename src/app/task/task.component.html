@@ -1,1 +1,18 @@
-<p>task works!</p>
+<nz-steps [nzCurrent]="current">
+  <nz-step nzTitle="配置任务信息"></nz-step>
+  <nz-step nzTitle="配置数据源"></nz-step>
+  <nz-step nzTitle="配置标签政策"></nz-step>
+</nz-steps>
+
+<div class="steps-content">{{ stepsContent }}</div>
+<div class="steps-action">
+  <button nz-button nzType="default" (click)="pre()" *ngIf="current > 0">
+    <span>Previous</span>
+  </button>
+  <button nz-button nzType="default" (click)="next()" *ngIf="current < 2">
+    <span>Next</span>
+  </button>
+  <button nz-button nzType="primary" (click)="done()" *ngIf="current === 2">
+    <span>Done</span>
+  </button>
+</div>

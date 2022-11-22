@@ -3,6 +3,7 @@ import {UntypedFormBuilder, UntypedFormGroup, Validators} from '@angular/forms';
 import {ConnectorService} from 'src/app/core/service/connector.service';
 import {Connector, ConnectorInput} from 'src/app/core/type/graphql-type';
 import {NzMessageService} from 'ng-zorro-antd/message';
+import {NzNotificationService} from "ng-zorro-antd/notification";
 
 @Component({
   selector: 'app-connector',
@@ -22,7 +23,8 @@ export class ConnectorComponent implements OnInit {
   constructor(
     private fb: UntypedFormBuilder,
     private connectorService: ConnectorService,
-    private message: NzMessageService
+    private message: NzMessageService,
+    private notification: NzNotificationService
   ) {
   }
 
@@ -101,9 +103,27 @@ export class ConnectorComponent implements OnInit {
     }
   }
 
-  // ngOnDestroy() {
-  //   this.querySubscription.unsubscribe();
-  // }
+  removeConnectorById(id: string) {
+    this.connectorService.removeConnectorById(id).subscribe({
+      next: _ => {
+        this.notification.create(
+          'success',
+          '删除成功',
+          ''
+        );
+        this.connectorService.pagingQueryConnectors(this.pageSize, (this.currentPageIndex - 1) * this.pageSize).refetch()
+      }, error: e => {
+        this.notification.create(
+          'error',
+          '删除失败',
+          ''
+        );
+        console.error(e)
+      }
+    })
+  }
+
+
 
 
 }
