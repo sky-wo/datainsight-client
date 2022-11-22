@@ -12,16 +12,18 @@ import {ActorService} from "../../core/service/actor.service";
 export class ActorListComponent implements OnInit {
 
   listOfData: readonly Actor[] = []
+  isTheDataLoaded: boolean = false;
   pageIndex: number = 1
   pageSize: number = 10
   totalData: number = 0
 
+
   constructor(private activeRoute: ActivatedRoute, private actorService: ActorService) {
-    this.activeRoute.queryParams.subscribe(r => {
-      if (r) {
-        this.actorService.pagingQueryActors(this.pageSize, (this.pageIndex - 1) * this.pageSize).refetch()
-      }
-    })
+    // this.activeRoute.queryParams.subscribe(r => {
+    //   if (r) {
+    //     this.actorService.pagingQueryActors(this.pageSize, (this.pageIndex - 1) * this.pageSize).refetch()
+    //   }
+    // })
   }
 
   ngOnInit(): void {
@@ -34,9 +36,10 @@ export class ActorListComponent implements OnInit {
         next: r => {
           this.listOfData = r.data.actors.items
           this.totalData = r.data.actors.total
+          this.isTheDataLoaded = true
         },
         error: e => {
-          console.error("connectors发生位置错误" + e)
+          console.error(e)
         }
       }
     )

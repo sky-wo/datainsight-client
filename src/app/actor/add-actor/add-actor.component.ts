@@ -30,7 +30,7 @@ export class AddActorComponent implements OnInit {
         this.dataList = r.data.connectors.items
       },
       error: e => {
-        console.error("add-Sources出错了" + e)
+        console.error(e)
       }
     })
   }

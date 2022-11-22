@@ -40,7 +40,7 @@ export class SpecComponent implements OnInit {
             this.schema = r.data.connector.specification.connectionSpecification as JSONSchema7
           },
           error: e => {
-            console.error("specInit发生未知错误" + e)
+            console.error(e)
           }
         }
       )
@@ -65,7 +65,7 @@ export class SpecComponent implements OnInit {
           },
           error: e => {
             this.message.create('error', `添加出错`);
-            console.error("submitConfig发生未知错误:" + e)
+            console.error(e)
           }
         }
       )

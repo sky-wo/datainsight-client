@@ -41,7 +41,7 @@ export class PolicyComponent implements OnInit {
         this.listOfData = r.data.dataTags.items as DataTag[]
         this.totalData = r.data.dataTags.total
       }, error: e => {
-        console.error("connectors发生位置错误" + e)
+        console.error(e)
       }
     })
   }
@@ -81,7 +81,7 @@ export class PolicyComponent implements OnInit {
           this.isOkLoading = false
           this.isVisible = false
           this.message.create('error', `添加出错`);
-          console.error("addConector发生位置错误" + e)
+          console.error(e)
         }
       })
     } else {

@@ -43,7 +43,7 @@ export class ConnectorComponent implements OnInit {
         this.listOfData = r.data.connectors.items as Connector[]
         this.totalData = r.data.connectors.total
       }, error: e => {
-        console.error("connectors发生位置错误" + e)
+        console.error(e)
       }
     })
   }
@@ -77,7 +77,7 @@ export class ConnectorComponent implements OnInit {
       //       this.isVisible = false
       //     },
       //     error: e => {
-      //       console.error("addConector发生位置错误" + e)
+      //       console.error(e)
       //     }
       //   }
       // )
@@ -90,7 +90,7 @@ export class ConnectorComponent implements OnInit {
           this.isOkLoading = false
           this.isVisible = false
           this.message.create('error', `添加出错`);
-          console.error("addConector发生位置错误" + e)
+          console.error(e)
         }
       })
     } else {
