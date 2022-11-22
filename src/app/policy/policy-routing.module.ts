@@ -1,6 +1,5 @@
 import {NgModule} from '@angular/core';
 import {RouterModule, Routes} from '@angular/router';
-import {ConnectorComponent} from "../connector/connector.component";
 import {PolicyComponent} from "./policy.component";
 
 const routes: Routes = [
