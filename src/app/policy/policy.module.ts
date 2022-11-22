@@ -4,7 +4,7 @@ import {CommonModule} from '@angular/common';
 import {PolicyRoutingModule} from './policy-routing.module';
 import {PolicyComponent} from './policy.component';
 import {SharedModule} from "../shared/shared.module";
-
+import {DragDropModule} from '@angular/cdk/drag-drop';
 
 @NgModule({
   declarations: [
@@ -13,7 +13,8 @@ import {SharedModule} from "../shared/shared.module";
   imports: [
     CommonModule,
     PolicyRoutingModule,
-    SharedModule
+    SharedModule,
+    DragDropModule
   ]
 })
 export class PolicyModule {

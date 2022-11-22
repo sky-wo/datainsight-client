@@ -1,8 +1,5 @@
 import {Component, OnInit} from '@angular/core';
-import {DataTag, DataTagInput} from "../core/type/graphql-type";
-import {UntypedFormBuilder, UntypedFormGroup, Validators} from "@angular/forms";
-import {NzMessageService} from "ng-zorro-antd/message";
-import {PolicyService} from "../core/service/policy.service";
+import {CdkDragDrop, moveItemInArray, transferArrayItem} from '@angular/cdk/drag-drop';
 
 @Component({
   selector: 'app-policy',
@@ -11,92 +8,26 @@ import {PolicyService} from "../core/service/policy.service";
 })
 export class PolicyComponent implements OnInit {
 
-  listOfData: DataTag[] = []
-  pageSize: number = 10
-  totalData: number = 0
-  currentPageIndex: number = 1
-  isVisible = false;
-  isOkLoading = false;
-  validateForm!: UntypedFormGroup;
+  // lists = [['Get to work', 'Pick up groceries', 'Go home', 'Fall asleep'],['Get up', 'Brush teeth', 'Take a shower', 'Check e-mail', 'Walk dog'],['Get up', 'Brush teeth', 'Take a shower', 'Check e-mail', 'Walk dog']]
 
-  constructor(
-    private fb: UntypedFormBuilder,
-    private policyService: PolicyService,
-    private message: NzMessageService
-  ) {
-  }
+  todo = ['Get to work', 'Pick up groceries', 'Go home', 'Fall asleep'];
+  done = ['Get up', 'Brush teeth', 'Take a shower', 'Check e-mail', 'Walk dog'];
+  done2 = ['666', 'Brush teeth', 'Take a shower', 'Check e-mail', 'Walk dog'];
 
   ngOnInit(): void {
-    this.validateForm = this.fb.group({
-      name: [null, [Validators.required]],
-      level: [null, [Validators.required]],
-      alert: [null, [Validators.required]],
-    });
-    this.pagingQueryConnectors(this.pageSize, 0)
+
   }
 
-  pagingQueryConnectors(first: number, skip: number) {
-    this.policyService.pagingQueryDataTags(first, skip).valueChanges.subscribe({
-      next: r => {
-        this.listOfData = r.data.dataTags.items as DataTag[]
-        this.totalData = r.data.dataTags.total
-      }, error: e => {
-        console.error(e)
-      }
-    })
-  }
-
-
-  pageChange() {
-    this.pagingQueryConnectors(this.pageSize, (this.currentPageIndex - 1) * this.pageSize)
-  }
-
-
-  showModal(): void {
-    this.isVisible = true;
-  }
-
-  handleCancel(): void {
-    this.isVisible = false;
-  }
-
-  submitForm(): void {
-    if (this.validateForm.valid) {
-      this.isOkLoading = true
-
-
-      const dataTagInput: DataTagInput = {
-        name: this.validateForm.value.name,
-        level: this.validateForm.value.level,
-        alert: this.validateForm.value.alert
-      }
-
-
-      this.policyService.addDataTag(dataTagInput).subscribe({
-        next: _ => {
-          this.isOkLoading = false
-          this.isVisible = false
-          this.policyService.pagingQueryDataTags(this.pageSize, (this.currentPageIndex - 1) * this.pageSize).refetch()
-        }, error: e => {
-          this.isOkLoading = false
-          this.isVisible = false
-          this.message.create('error', `添加出错`);
-          console.error(e)
-        }
-      })
+  drop(event: CdkDragDrop<string[]>) {
+    if (event.previousContainer === event.container) {
+      moveItemInArray(event.container.data, event.previousIndex, event.currentIndex);
     } else {
-      Object.values(this.validateForm.controls).forEach(control => {
-        if (control.invalid) {
-          control.markAsDirty();
-          control.updateValueAndValidity({onlySelf: true});
-        }
-      });
+      transferArrayItem(
+        event.previousContainer.data,
+        event.container.data,
+        event.previousIndex,
+        event.currentIndex,
+      );
     }
   }
-
-  // ngOnDestroy() {
-  //   this.querySubscription.unsubscribe();
-  // }
-
-
 }
