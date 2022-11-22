@@ -11,9 +11,9 @@ generates:
     config:
       scalars:
         Long: number
-        JSON: string
+        # any 类型可以直接取值
+        JSON: any
         Timestamp: string
-
 
 # TODO 自动生成的 TaskLogPage 含有 maybe类型
 

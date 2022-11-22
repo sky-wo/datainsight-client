@@ -1,5 +1,5 @@
-<nz-table #basicTable [nzData]="listOfData" [(nzPageIndex)]="pageIndex" [(nzPageSize)]="pageSize" [nzTotal]="totalData"
-          [nzFrontPagination]="false" (nzPageIndexChange)="pageChange()" [nzLoading]="!isTheDataLoaded">
+<nz-table #basicTable (nzPageIndexChange)="pageChange()" [(nzPageIndex)]="pageIndex" [(nzPageSize)]="pageSize" [nzData]="listOfData"
+          [nzFrontPagination]="false" [nzLoading]="!isTheDataLoaded" [nzTotal]="totalData">
   <thead>
   <tr>
     <th>Actor名称</th>

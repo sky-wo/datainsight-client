@@ -1,15 +1,63 @@
 import {Injectable} from '@angular/core';
 import {Apollo, gql, MutationResult, QueryRef} from "apollo-angular";
-import {TaskInput, TasksPage} from "../type/graphql-type";
-import {Observable} from "rxjs";
+import {BehaviorSubject, combineLatest, filter, map, Observable} from 'rxjs';
+
+import {
+  ConfiguredDataInsightCatalog,
+  ConfiguredDataInsightCatalogInput,
+  TaskInput,
+  TaskInspectorConfig,
+  TasksPage
+} from "../type/graphql-type";
+
 
 @Injectable({
   providedIn: 'root'
 })
 export class TaskService {
 
+  addTaskInput$!: Observable<TaskInput>;
+  private actorIdSource: BehaviorSubject<string> = new BehaviorSubject<string>("")
+  actorId$: Observable<string> = this.actorIdSource.asObservable().pipe(filter(r => r !== ""))
+  private configuredCatalogSource: BehaviorSubject<ConfiguredDataInsightCatalogInput | undefined> = new BehaviorSubject<ConfiguredDataInsightCatalogInput | undefined>(undefined)
+  configuredCatalog$: Observable<ConfiguredDataInsightCatalog | undefined> = this.configuredCatalogSource.asObservable().pipe(filter(r => r !== undefined))
+  private inspectorConfigSource: BehaviorSubject<TaskInspectorConfig | undefined> = new BehaviorSubject<TaskInspectorConfig | undefined>(undefined)
+  inspectorConfig$: Observable<TaskInspectorConfig | undefined> = this.inspectorConfigSource.asObservable().pipe(filter(r => r !== undefined))
+  private supervisorConfigSource: BehaviorSubject<string> = new BehaviorSubject<string>("")
+  supervisorConfig$: Observable<string> = this.supervisorConfigSource.asObservable()
+
   constructor(private apollo: Apollo) {
+    this.addTaskInput$ = combineLatest([this.actorId$, this.configuredCatalog$, this.inspectorConfig$, this.supervisorConfig$]).pipe(map(([actorId, catalog, inspector, supervisor]) => {
+      const res: TaskInput = {
+        actorId: actorId, configuredCatalog: catalog!, inspectorConfig: inspector!, supervisorConfig: supervisor
+      }
+      return res
+    }))
   }
+
+  toggleActorId(id: string) {
+    this.actorIdSource.next(id)
+  }
+
+  toggleConfiguredCatalog(config: ConfiguredDataInsightCatalog) {
+    this.configuredCatalogSource.next(config)
+  }
+
+  toggleInspectorConfig(config: TaskInspectorConfig) {
+    this.inspectorConfigSource.next(config)
+  }
+
+  toggleSupervisorConfig(config: string) {
+    this.supervisorConfigSource.next(config)
+  }
+
+  // createTask() {
+  //   this.addTaskInput$.pipe(take(1)).subscribe(r => {
+  //     //创建任务
+  //     this.addTask(r).
+  //   })
+  // }
+
 
   /**
    * @return  id
@@ -20,8 +68,7 @@ export class TaskService {
         mutation ($taskInput: TaskInput!) {
           addTask(taskInput: $taskInput)
         }
-      `,
-      variables: {
+      `, variables: {
         taskInput
       }
     })
@@ -36,8 +83,7 @@ export class TaskService {
         mutation ($id: ID!) {
           startTask(id: $id)
         }
-      `,
-      variables: {
+      `, variables: {
         id
       }
     })
@@ -52,8 +98,7 @@ export class TaskService {
         mutation ($id: ID!) {
           cancelTask(id: $id)
         }
-      `,
-      variables: {
+      `, variables: {
         id
       }
     })
@@ -68,8 +113,7 @@ export class TaskService {
         mutation ($id: ID!) {
           removeTask(id: $id)
         }
-      `,
-      variables: {
+      `, variables: {
         id
       }
     })
@@ -145,8 +189,7 @@ export class TaskService {
             }
           }
         }
-      `,
-      variables: {
+      `, variables: {
         id
       }
     })
@@ -164,10 +207,8 @@ export class TaskService {
             }
           }
         }
-      `,
-      variables: {
-        first,
-        skip
+      `, variables: {
+        first, skip
       }
     })
   }

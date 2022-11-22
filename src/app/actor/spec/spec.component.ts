@@ -59,9 +59,9 @@ export class SpecComponent implements OnInit {
         connectorConfig: this.form?.getValue()
       }).subscribe(
         {
-          next: _ => {
+          next: r => {
             //跳转回去刷新组件
-            this.router.navigate(['/frame/sources/'], {queryParams: {refresh: true}})
+            this.router.navigate(['/frame/actor/selectTable', r.data?.addActor])
           },
           error: e => {
             this.message.create('error', `添加出错`);

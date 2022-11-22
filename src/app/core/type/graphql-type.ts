@@ -1,3 +1,4 @@
+import { gql } from 'apollo-angular';
 export type Maybe<T> = T | null;
 export type InputMaybe<T> = Maybe<T>;
 export type Exact<T extends { [key: string]: unknown }> = { [K in keyof T]: T[K] };
@@ -11,7 +12,7 @@ export type Scalars = {
   Int: number;
   Float: number;
   /** 任意 JSON 对象 */
-  JSON: string;
+  JSON: any;
   /** A 64-bit signed integer */
   Long: number;
   /** 事件戳, 从1970-1-1起的毫秒数 */

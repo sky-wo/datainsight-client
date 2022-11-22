@@ -21,7 +21,7 @@ export class AddActorComponent implements OnInit {
   }
 
   nextChoose() {
-    this.route.navigate(["/frame/sources/spec/", this.selectChoose])
+    this.route.navigate(["/frame/actor/spec/", this.selectChoose])
   }
 
   loadConnectorList() {

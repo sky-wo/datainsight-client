@@ -14,7 +14,7 @@ export class ActorService {
   /**
    * @return  id
    * */
-  addActor(actorInput: ActorInput): Observable<MutationResult<string>> {
+  addActor(actorInput: ActorInput): Observable<MutationResult<{ addActor: number }>> {
     return this.apollo.mutate({
       mutation: gql`
         mutation ($actorInput: ActorInput!) {
