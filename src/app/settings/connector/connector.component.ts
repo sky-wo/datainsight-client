@@ -32,21 +32,18 @@ export class ConnectorComponent implements OnInit {
       image: [null, [Validators.required]],
       version: [null, [Validators.required]],
     });
-    this.pagingQueryConnectors(this.pageSize, (this.currentPageIndex - 1) * this.pageSize)
+    this.pagingQueryConnectors(this.pageSize, 0)
   }
 
   pagingQueryConnectors(first: number, skip: number) {
-    this.connectorService.pagingQueryConnectors(first, skip).valueChanges.subscribe(
-      {
-        next: r => {
-          this.listOfData = r.data.connectors.items as Connector[]
-          this.totalData = r.data.connectors.total
-        },
-        error: e => {
-          console.error("connectors发生位置错误" + e)
-        }
+    this.connectorService.pagingQueryConnectors(first, skip).valueChanges.subscribe({
+      next: r => {
+        this.listOfData = r.data.connectors.items as Connector[]
+        this.totalData = r.data.connectors.total
+      }, error: e => {
+        console.error("connectors发生位置错误" + e)
       }
-    )
+    })
   }
 
 
@@ -82,21 +79,18 @@ export class ConnectorComponent implements OnInit {
       //     }
       //   }
       // )
-      this.connectorService.addConnector(connector).subscribe(
-        {
-          next: _ => {
-            this.isOkLoading = false
-            this.isVisible = false
-            this.connectorService.pagingQueryConnectors(this.pageSize, (this.currentPageIndex - 1) * this.pageSize).refetch()
-          },
-          error: e => {
-            this.isOkLoading = false
-            this.isVisible = false
-            this.message.create('error', `添加出错`);
-            console.error("addConector发生位置错误" + e)
-          }
+      this.connectorService.addConnector(connector).subscribe({
+        next: _ => {
+          this.isOkLoading = false
+          this.isVisible = false
+          this.connectorService.pagingQueryConnectors(this.pageSize, (this.currentPageIndex - 1) * this.pageSize).refetch()
+        }, error: e => {
+          this.isOkLoading = false
+          this.isVisible = false
+          this.message.create('error', `添加出错`);
+          console.error("addConector发生位置错误" + e)
         }
-      )
+      })
     } else {
       Object.values(this.validateForm.controls).forEach(control => {
         if (control.invalid) {
@@ -106,4 +100,10 @@ export class ConnectorComponent implements OnInit {
       });
     }
   }
+
+  // ngOnDestroy() {
+  //   this.querySubscription.unsubscribe();
+  // }
+
+
 }

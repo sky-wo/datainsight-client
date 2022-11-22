@@ -12,7 +12,9 @@ export class AddActorComponent implements OnInit {
 
   dataList!: readonly Connector[];
   selectChoose: String = ""
-  constructor(private sourcesService: SourcesService, private route: Router) { }
+  constructor(
+    private sourcesService: SourcesService,
+    private route: Router) { }
 
   ngOnInit(): void {
     this.sourcesService.connectors().subscribe({

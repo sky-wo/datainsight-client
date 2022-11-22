@@ -82,8 +82,8 @@ export class SourcesService {
     })
   }
 
-  addActor(actorInput: ActorInput): Observable<MutationResult<number>> {
-    return this.apollo.mutate<number, { actorInput: ActorInput }>({
+  addActor(actorInput: ActorInput): Observable<MutationResult<{ addActor: number }>> {
+    return this.apollo.mutate<{ addActor: number }, { actorInput: ActorInput }>({
       mutation: gql`
         mutation addActor($actorInput: ActorInput!) {
           addActor(actorInput: $actorInput)
@@ -98,8 +98,8 @@ export class SourcesService {
   actor(id: string): Observable<{ actor: Actor }> {
     return this.apollo.query<{ actor: Actor }, { id: string }>({
       query: gql`
-      query actor{
-       actor(id: 8){
+      query actor($id:ID!){
+       actor(id:$id){
          id
          name
          connectorId
