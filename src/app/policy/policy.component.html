@@ -1,10 +1,51 @@
-<!--<div class="tags-index">-->
-<!--  <div class="left-content">-->
-
-<!--  </div>-->
-<!--  <div class="right-content">-->
-
-<!--  </div>-->
-<!--</div>-->
-
-标签规则
+<button nz-button nzType="primary" (click)="showModal()">
+  <span>添加标签</span>
+</button>
+<nz-modal [(nzVisible)]="isVisible" nzTitle="Modal Title" (nzOnCancel)="handleCancel()" (nzOnOk)="submitForm()"
+          [nzOkLoading]="isOkLoading">
+  <nz-card *nzModalContent>
+    <form nz-form [formGroup]="validateForm" (submit)="submitForm()">
+      <nz-form-item>
+        <nz-form-label [nzSpan]="4" nzRequired nzFor="name">标签名称</nz-form-label>
+        <nz-form-control [nzSpan]="8" nzErrorTip="请输入标签名称">
+          <input type="text" nz-input formControlName="name" placeholder="请输入标签名称"/>
+        </nz-form-control>
+      </nz-form-item>
+      <nz-form-item>
+        <nz-form-label [nzSpan]="4" nzRequired nzFor="level">等级</nz-form-label>
+        <nz-form-control [nzSpan]="8" nzErrorTip="请输入等级">
+          <input type="text" nz-input formControlName="level" placeholder="请输入等级"/>
+        </nz-form-control>
+      </nz-form-item>
+      <nz-form-item>
+        <nz-form-label [nzSpan]="4" nzRequired nzFor="alert">是否报警</nz-form-label>
+        <nz-form-control [nzSpan]="8" nzErrorTip="是否报警">
+          <input type="text" nz-input formControlName="alert" placeholder="是否报警"/>
+        </nz-form-control>
+      </nz-form-item>
+      <!-- <nz-form-item>
+          <nz-form-control [nzSpan]="8" [nzOffset]="4">
+              <button nz-button nzType="primary" [nzLoading]="loading">下一步</button>
+          </nz-form-control>
+      </nz-form-item> -->
+    </form>
+  </nz-card>
+</nz-modal>
+<nz-table #basicTable [nzData]="listOfData" [(nzPageIndex)]="currentPageIndex" [(nzPageSize)]="pageSize"
+          [nzTotal]="totalData"
+          [nzFrontPagination]="false" (nzPageIndexChange)="pageChange()">
+  <thead>
+  <tr>
+    <th>名称</th>
+    <th>等级</th>
+    <th>是否报警</th>
+  </tr>
+  </thead>
+  <tbody>
+  <tr *ngFor="let data of basicTable.data">
+    <td>{{ data.name }}</td>
+    <td>{{ data.level }}</td>
+    <td>{{ data.alert }}</td>
+  </tr>
+  </tbody>
+</nz-table>
