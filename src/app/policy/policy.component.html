@@ -1,46 +1,65 @@
 <div class="example-container">
-  <h2>To do</h2>
-
+  <h2>根标签</h2>
   <div
-    #todoList="cdkDropList"
+    #rootList="cdkDropList"
     (cdkDropListDropped)="drop($event)"
-    [cdkDropListConnectedTo]="[doneList]"
-    [cdkDropListData]="todo"
+    [cdkDropListConnectedTo]="[c2List,c3List,c4List]"
+    [cdkDropListData]="rootNode"
+    [cdkDropListDisabled]="openSort"
+    cdkDropList
+    class="example-list"
+  >
+    <div (click)="listChilds(item.id)" *ngFor="let item of rootNode" cdkDrag class="example-box">{{item.name}}</div>
+  </div>
+</div>
+
+
+<div class="example-container">
+  <h2>二级标签</h2>
+  <div
+    #c2List="cdkDropList"
+    (cdkDropListDropped)="drop($event)"
+    [cdkDropListConnectedTo]="[rootList,c3List,c4List]"
+    [cdkDropListData]="c2"
     cdkDropList
     class="example-list">
-    <div *ngFor="let item of todo" cdkDrag class="example-box">{{item}}</div>
+    <div *ngFor="let item of c2" cdkDrag class="example-box">{{item.name}}</div>
   </div>
 </div>
 
 <div class="example-container">
-  <h2>Done</h2>
-
+  <h2>三级标签</h2>
   <div
-    #doneList="cdkDropList"
+    #c3List="cdkDropList"
     (cdkDropListDropped)="drop($event)"
-    [cdkDropListConnectedTo]="[todoList]"
-    [cdkDropListData]="done"
+    [cdkDropListConnectedTo]="[rootList,c2List, c4List]"
+    [cdkDropListData]="c3"
     cdkDropList
     class="example-list">
-    <div *ngFor="let item of done" cdkDrag class="example-box">{{item}}</div>
+    <div *ngFor="let item of c3" cdkDrag class="example-box">{{item.name}}</div>
   </div>
 </div>
+
 
 <div class="example-container">
-  <h2>Done2</h2>
-
+  <h2>四级标签</h2>
   <div
-    #doneList="cdkDropList"
+    #c4List="cdkDropList"
     (cdkDropListDropped)="drop($event)"
-    [cdkDropListConnectedTo]="[doneList]"
-    [cdkDropListData]="done2"
+    [cdkDropListConnectedTo]="[rootList,c2List,c3List]"
+    [cdkDropListData]="c4"
     cdkDropList
     class="example-list">
-    <div *ngFor="let item of done" cdkDrag class="example-box">{{item}}</div>
+    <div *ngFor="let item of c4" cdkDrag class="example-box">{{item.name}}</div>
   </div>
 </div>
 
-<!--<div cdkDropListGroup>-->
-<!--  &lt;!&ndash; All lists in here will be connected. &ndash;&gt;-->
-<!--  <div cdkDropList *ngFor="let list of lists"></div>-->
-<!--</div>-->
+
+<button (click)="sort()">排序</button>
+
+<!--&lt;!&ndash;<div cdkDropListGroup>&ndash;&gt;-->
+<!--&lt;!&ndash;  &lt;!&ndash; All lists in here will be connected. &ndash;&gt;&ndash;&gt;-->
+<!--&lt;!&ndash;  <div cdkDropList *ngFor="let list of lists"></div>&ndash;&gt;-->
+<!--&lt;!&ndash;</div>&ndash;&gt;-->
+
+
