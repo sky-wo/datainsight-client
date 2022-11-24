@@ -1,9 +1,11 @@
-import {NgModule} from '@angular/core';
-import {RouterModule, Routes} from '@angular/router';
-import {TaskComponent} from './task.component';
+import { NgModule } from '@angular/core';
+import { RouterModule, Routes } from '@angular/router';
+import { TaskRunListComponent } from './task-run-list/task-run-list.component';
+import { TaskComponent } from './task.component';
 
 const routes: Routes = [
-  {path: "", component: TaskComponent}
+  { path: "", component: TaskComponent },
+  { path: "taskRun/:taskId", component: TaskRunListComponent }
 ];
 
 @NgModule({

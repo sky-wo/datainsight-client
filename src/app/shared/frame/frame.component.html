@@ -10,27 +10,30 @@
           <a [routerLink]="['/frame/dashboard']" routerLinkActive="active">概览</a>
         </li>
 
-        <li nz-submenu nzTitle="任务" nzIcon="user">
-          <ul>
-            <li nz-menu-item>
-              <a [routerLink]="['/frame/task']" routerLinkActive="active">创建任务</a>
-            </li>
-          </ul>
+        <li nz-menu-item>
+          <a [routerLink]="['/frame/task']" routerLinkActive="active">任务</a>
         </li>
 
-        <li nz-submenu nzTitle="配置中心" nzIcon="team">
-          <ul>
-            <li nz-menu-item>
-              <a [routerLink]="['/frame/connector']" routerLinkActive="active">连接器配置</a>
-            </li>
-            <li nz-menu-item>
-              <a [routerLink]="['/frame/actor']" routerLinkActive="active">Actor 实例</a>
-            </li>
-            <li nz-menu-item>
-              <a [routerLink]="['/frame/policy']" routerLinkActive="active">策略管理</a>
-            </li>
-          </ul>
+
+        <!-- <li nz-menu-item>
+          <span nz-icon nzType="file"></span>
+          <a [routerLink]="['/frame/dashboard']" routerLinkActive="active">概览</a>
+        </li> -->
+
+        <li nz-menu-item>
+          <a [routerLink]="['/frame/connector']" routerLinkActive="active">连接器配置</a>
         </li>
+
+        <li nz-menu-item>
+          <a [routerLink]="['/frame/actor']" routerLinkActive="active">Actor 实例</a>
+        </li>
+
+
+
+        <li nz-menu-item>
+          <a [routerLink]="['/frame/policy']" routerLinkActive="active">策略管理</a>
+        </li>
+
 
 
       </ul>
@@ -39,8 +42,8 @@
 
     <nz-layout>
       <nz-header>
-                <span class="trigger" nz-icon [nzType]="isCollapsed ? 'menu-unfold' : 'menu-fold'"
-                      (click)="isCollapsed = !isCollapsed"></span>
+        <span class="trigger" nz-icon [nzType]="isCollapsed ? 'menu-unfold' : 'menu-fold'"
+          (click)="isCollapsed = !isCollapsed"></span>
       </nz-header>
       <nz-content>
         <nz-breadcrumb>

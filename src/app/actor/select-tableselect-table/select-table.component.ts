@@ -31,11 +31,8 @@ interface IDataInsightStream {
 export class SelectTableComponent implements OnInit {
 
   checked = false;
-  indeterminate = false;
-  listOfCurrentPageData: readonly ItemData[] = [];
-  listOfData: readonly ItemData[] = [];
-  setOfCheckedId = new Set<number>();
 
+  indeterminate = false;
 
   isVisible = false
 
@@ -44,6 +41,8 @@ export class SelectTableComponent implements OnInit {
   syncModeItems = [DataInsightSyncMode.FullRefresh, DataInsightSyncMode.Incremental]
 
   dataSource = new BehaviorSubject<IDataInsightStream[]>([])
+
+  selectModal = 0
 
   constructor(
     private actorService: ActorService,
@@ -57,9 +56,10 @@ export class SelectTableComponent implements OnInit {
     const tableData: IDataInsightStream[] = []
     if (actorId) {
       this.actorService.queryActorById(actorId).valueChanges.subscribe(r => {
-        const properties: { [key: string]: JSONSchema7 }[] = []
+
 
         r.data.actor.catalog.streams.forEach((r, index) => {
+          let properties: { [key: string]: JSONSchema7 }[] = []
           Object.keys(r.jsonSchema.properties).forEach(res => {
             const pro: { [key: string]: JSONSchema7 } = {}
             pro[res] = r.jsonSchema.properties[res] as JSONSchema7
@@ -122,11 +122,11 @@ export class SelectTableComponent implements OnInit {
     this.taskService.toggleInspectorConfig({
       enabledDataTagIds: []
     })
-    this.taskService.addTaskInput$.pipe(take(1),switchMap((r)=>this.taskService.addTask(r))).subscribe({
-      next:_=>{
+    this.taskService.addTaskInput$.pipe(take(1), switchMap((r) => this.taskService.addTask(r))).subscribe({
+      next: _ => {
         this.message.create("success", `任务创建成功`);
       },
-      error:e=>{
+      error: e => {
         console.error(e)
       }
     })
@@ -164,7 +164,8 @@ export class SelectTableComponent implements OnInit {
     }
   }
 
-  showModal(): void {
+  showModal(index: number): void {
+    this.selectModal = index
     this.isVisible = true;
   }
 

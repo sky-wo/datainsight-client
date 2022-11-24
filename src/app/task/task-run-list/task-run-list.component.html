@@ -1,0 +1,12 @@
+<nz-collapse>
+    <!-- 时间请求出错，后续解决 -->
+    <nz-collapse-panel *ngFor="let data of dataSource" [nzHeader]="'execution--'+data.state" [nzDisabled]="false">
+        <div class="taskRunLog">
+            <ul>
+                <li *ngFor="let item of data.logs.items">
+                    {{item.message}}
+                </li>
+            </ul>
+        </div>
+    </nz-collapse-panel>
+</nz-collapse>

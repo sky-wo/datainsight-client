@@ -26,7 +26,7 @@
             </td>
             <td>{{data.stream.sourceDefinedPrimaryKey}}</td>
             <td>
-                <button nz-button nzType="primary" (click)="showModal()">
+                <button nz-button nzType="primary" (click)="showModal(index)">
                     <span>查看表</span>
                 </button>
             </td>
@@ -36,7 +36,7 @@
 
 <nz-modal [(nzVisible)]="isVisible" nzTitle="The first Modal" (nzOnCancel)="handleCancel()" (nzOnOk)="handleOk()">
     <ng-container *nzModalContent>
-        <nz-table #basicTable [nzData]="datasource">
+        <nz-table #basicTable [nzData]="datasource[selectModal].properties">
             <thead>
                 <tr>
                     <th>名称</th>
@@ -45,11 +45,9 @@
             </thead>
             <tbody>
                 <ng-container *ngFor="let data of basicTable.data;let i=index">
-                    <tr *ngFor="let item of data.properties">
-                        <ng-container *ngFor="let t of item |keyvalue">
-                            <td>{{t.key}}</td>
-                            <td>{{t.value.type}}</td>
-                        </ng-container>
+                    <tr *ngFor="let item of data|keyvalue">
+                        <td>{{item.key}}</td>
+                        <td>{{item.value.type}}</td>
                     </tr>
                 </ng-container>
             </tbody>

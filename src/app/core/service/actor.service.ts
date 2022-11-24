@@ -1,7 +1,7 @@
-import {Injectable} from '@angular/core';
-import {Apollo, gql, MutationResult, QueryRef} from "apollo-angular";
-import {Actor, ActorInput, ActorPage} from "../type/graphql-type";
-import {Observable} from "rxjs";
+import { Injectable } from '@angular/core';
+import { Apollo, gql, MutationResult, QueryRef } from "apollo-angular";
+import { Actor, ActorInput, ActorPage } from "../type/graphql-type";
+import { map, Observable } from "rxjs";
 
 @Injectable({
   providedIn: 'root'
@@ -85,6 +85,7 @@ export class ActorService {
     })
   }
 
+
   pagingQueryActors(first: number, skip: number): QueryRef<{ actors: ActorPage }, { first: number, skip: number }> {
     return this.apollo.watchQuery({
       query: gql`
@@ -129,6 +130,32 @@ export class ActorService {
     })
   }
 
-
+  actor(id: string): Observable<{ actor: Actor }> {
+    return this.apollo.query<{ actor: Actor }, { id: string }>({
+      query: gql`
+      query actor($id:ID!){
+       actor(id:$id){
+         id
+         name
+         connectorId
+         catalog{
+         streams{
+           name
+           jsonSchema
+           supportedSyncModes
+           sourceDefinedCursor
+           defaultCursorField
+           sourceDefinedPrimaryKey
+           namespace
+          }
+          }
+        }
+      }
+     `,
+      variables: {
+        id: id,
+      }
+    }).pipe(map(r => r.data))
+  }
 
 }

@@ -1,18 +1,31 @@
-<nz-steps [nzCurrent]="current">
-  <nz-step nzTitle="配置任务信息"></nz-step>
-  <nz-step nzTitle="配置数据源"></nz-step>
-  <nz-step nzTitle="配置标签政策"></nz-step>
-</nz-steps>
+<!-- <button nz-button nzType="primary" (click)="creatTask()">创建任务</button> -->
+<nz-table #nestedTable [nzData]="listData" [(nzPageIndex)]="pageIndex" [(nzPageSize)]="pageSize" [nzTotal]="totalData"
+  [nzFrontPagination]="false" (nzPageIndexChange)="pageChange()">
+  <thead>
+    <tr>
+      <th>id</th>
+      <th>镜像名称</th>
+      <th>状态</th>
+      <th>操作</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr *ngFor="let data of nestedTable.data;let index=index" (click)="detail()">
+      <td>{{ index }}</td>
+      <td>{{ data.actor.name }}</td>
+      <td>{{ data.state }}</td>
+      <td>
+        <button nz-button nzType="primary" (click)="start(data.id)"
+          [nzLoading]="data.state==='RUNNING'?true:false">开始任务</button>
+        <button nz-button nzType="primary" (click)="cancel(data.id)"
+          [disabled]="data.state!=='RUNNING'?true:false">取消任务</button>
+        <button nz-button nzType="primary" (click)="remove(data.id)">删除任务</button>
+        <button nz-button nzType="primary" [routerLink]="['/frame/task/taskRun',data.id]">任务详情</button>
+      </td>
+    </tr>
+  </tbody>
+</nz-table>
 
-<div class="steps-content">{{ stepsContent }}</div>
-<div class="steps-action">
-  <button nz-button nzType="default" (click)="pre()" *ngIf="current > 0">
-    <span>Previous</span>
-  </button>
-  <button nz-button nzType="default" (click)="next()" *ngIf="current < 2">
-    <span>Next</span>
-  </button>
-  <button nz-button nzType="primary" (click)="done()" *ngIf="current === 2">
-    <span>Done</span>
-  </button>
-</div>
+<!-- <nz-modal [(nzVisible)]="isVisible" nzTitle="The first Modal" (nzOnCancel)="handleCancel()" (nzOnOk)="handleOk()">
+
+</nz-modal> -->
