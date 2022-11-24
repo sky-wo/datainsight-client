@@ -1,65 +1,69 @@
-<div class="example-container">
-  <h2>根标签</h2>
-  <div
-    #rootList="cdkDropList"
-    (cdkDropListDropped)="drop($event)"
-    [cdkDropListConnectedTo]="[c2List,c3List,c4List]"
-    [cdkDropListData]="rootNode"
-    [cdkDropListDisabled]="openSort"
-    cdkDropList
-    class="example-list"
-  >
-    <div (click)="listChilds(item.id)" *ngFor="let item of rootNode" cdkDrag class="example-box">{{item.name}}</div>
-  </div>
-</div>
+
+<app-tree></app-tree>
 
 
-<div class="example-container">
-  <h2>二级标签</h2>
-  <div
-    #c2List="cdkDropList"
-    (cdkDropListDropped)="drop($event)"
-    [cdkDropListConnectedTo]="[rootList,c3List,c4List]"
-    [cdkDropListData]="c2"
-    cdkDropList
-    class="example-list">
-    <div *ngFor="let item of c2" cdkDrag class="example-box">{{item.name}}</div>
-  </div>
-</div>
-
-<div class="example-container">
-  <h2>三级标签</h2>
-  <div
-    #c3List="cdkDropList"
-    (cdkDropListDropped)="drop($event)"
-    [cdkDropListConnectedTo]="[rootList,c2List, c4List]"
-    [cdkDropListData]="c3"
-    cdkDropList
-    class="example-list">
-    <div *ngFor="let item of c3" cdkDrag class="example-box">{{item.name}}</div>
-  </div>
-</div>
+<!--<div class="example-container">-->
+<!--  <h2>根标签</h2>-->
+<!--  <div-->
+<!--    #rootList="cdkDropList"-->
+<!--    (cdkDropListDropped)="drop($event)"-->
+<!--    [cdkDropListConnectedTo]="[c2List,c3List,c4List]"-->
+<!--    [cdkDropListData]="rootNode"-->
+<!--    [cdkDropListDisabled]="openSort"-->
+<!--    cdkDropList-->
+<!--    class="example-list"-->
+<!--  >-->
+<!--    <div (click)="listChilds(item.id)" *ngFor="let item of rootNode" cdkDrag class="example-box">{{item.name}}</div>-->
+<!--  </div>-->
+<!--</div>-->
 
 
-<div class="example-container">
-  <h2>四级标签</h2>
-  <div
-    #c4List="cdkDropList"
-    (cdkDropListDropped)="drop($event)"
-    [cdkDropListConnectedTo]="[rootList,c2List,c3List]"
-    [cdkDropListData]="c4"
-    cdkDropList
-    class="example-list">
-    <div *ngFor="let item of c4" cdkDrag class="example-box">{{item.name}}</div>
-  </div>
-</div>
+<!--<div class="example-container">-->
+<!--  <h2>二级标签</h2>-->
+<!--  <div-->
+<!--    #c2List="cdkDropList"-->
+<!--    (cdkDropListDropped)="drop($event)"-->
+<!--    [cdkDropListConnectedTo]="[rootList,c3List,c4List]"-->
+<!--    [cdkDropListData]="c2"-->
+<!--    cdkDropList-->
+<!--    class="example-list">-->
+<!--    <div *ngFor="let item of c2" cdkDrag class="example-box">{{item.name}}</div>-->
+<!--  </div>-->
+<!--</div>-->
+
+<!--<div class="example-container">-->
+<!--  <h2>三级标签</h2>-->
+<!--  <div-->
+<!--    #c3List="cdkDropList"-->
+<!--    (cdkDropListDropped)="drop($event)"-->
+<!--    [cdkDropListConnectedTo]="[rootList,c2List, c4List]"-->
+<!--    [cdkDropListData]="c3"-->
+<!--    cdkDropList-->
+<!--    class="example-list">-->
+<!--    <div *ngFor="let item of c3" cdkDrag class="example-box">{{item.name}}</div>-->
+<!--  </div>-->
+<!--</div>-->
 
 
-<button (click)="sort()">排序</button>
+<!--<div class="example-container">-->
+<!--  <h2>四级标签</h2>-->
+<!--  <div-->
+<!--    #c4List="cdkDropList"-->
+<!--    (cdkDropListDropped)="drop($event)"-->
+<!--    [cdkDropListConnectedTo]="[rootList,c2List,c3List]"-->
+<!--    [cdkDropListData]="c4"-->
+<!--    cdkDropList-->
+<!--    class="example-list">-->
+<!--    <div *ngFor="let item of c4" cdkDrag class="example-box">{{item.name}}</div>-->
+<!--  </div>-->
+<!--</div>-->
 
-<!--&lt;!&ndash;<div cdkDropListGroup>&ndash;&gt;-->
-<!--&lt;!&ndash;  &lt;!&ndash; All lists in here will be connected. &ndash;&gt;&ndash;&gt;-->
-<!--&lt;!&ndash;  <div cdkDropList *ngFor="let list of lists"></div>&ndash;&gt;-->
-<!--&lt;!&ndash;</div>&ndash;&gt;-->
+
+<!--<button (click)="sort()">排序</button>-->
+
+<!--&lt;!&ndash;&lt;!&ndash;<div cdkDropListGroup>&ndash;&gt;&ndash;&gt;-->
+<!--&lt;!&ndash;&lt;!&ndash;  &lt;!&ndash; All lists in here will be connected. &ndash;&gt;&ndash;&gt;&ndash;&gt;-->
+<!--&lt;!&ndash;&lt;!&ndash;  <div cdkDropList *ngFor="let list of lists"></div>&ndash;&gt;&ndash;&gt;-->
+<!--&lt;!&ndash;&lt;!&ndash;</div>&ndash;&gt;&ndash;&gt;-->
 
 
