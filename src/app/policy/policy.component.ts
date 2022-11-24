@@ -44,6 +44,9 @@ export class PolicyComponent implements OnInit {
     this.policyService.pagingQueryDataTags(200, 0).valueChanges.subscribe({
       next: r => {
         this.originalData = r.data.dataTags.items as DataTag[]
+
+        console.log(this.originalData)
+
         for (let i = 0; i < this.originalData.length; i++) {
           let n = this.originalData[i]
           if (n.parentId) {

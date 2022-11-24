@@ -1,8 +1,36 @@
 <ngx-graph
-  class="chart-container"
-  [view]="[800, 300]"
-  [links]="links"
-  [nodes]="nodes"
+  [autoZoom]="true"
+  [curve]="curve"
+  [draggingEnabled]="false"
+  [enableZoom]="true"
   [layout]="layout"
+  [links]="links"
+  [nodeHeight]="30"
+  [nodeWidth]="30"
+  [nodes]="nodes"
+  [view]="[2000, 3000]"
+  class="chart-container"
 >
+
+  <ng-template #nodeTemplate let-node>
+    <svg height="30" width="60" xmlns="http://www.w3.org/2000/svg">
+      <g>
+        <title>background</title>
+        <rect fill="#fff" height="32" id="canvas_background" width="62" x="-1" y="-1"/>
+        <g display="none" height="100%" id="canvasGrid" overflow="visible" width="100%" x="0" y="0">
+          <rect fill="url(#gridpattern)" height="100%" stroke-width="0" width="100%" x="0" y="0"/>
+        </g>
+      </g>
+      <g>
+        <title>Layer 1</title>
+        <text fill="#000000" font-family="Helvetica, Arial, sans-serif" font-size="24"
+              id="svg_1" stroke="#000" stroke-width="0" text-anchor="start"
+              transform="matrix(0.383209, 0, 0, 0.401218, 12.6506, 0.973533)"
+              x="-2.73151" xml:space="preserve" y="43.90354">我是标签</text>
+      </g>
+    </svg>
+
+  </ng-template>
+
+
 </ngx-graph>

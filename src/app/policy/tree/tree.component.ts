@@ -1,6 +1,7 @@
 import {Component, OnInit} from '@angular/core';
 import {DagreNodesOnlyLayout, Edge, Layout, Node} from "@swimlane/ngx-graph";
 
+import * as shape from 'd3-shape';
 
 @Component({
   selector: 'app-tree',
@@ -10,6 +11,8 @@ import {DagreNodesOnlyLayout, Edge, Layout, Node} from "@swimlane/ngx-graph";
 export class TreeComponent implements OnInit {
 
   public layout: Layout = new DagreNodesOnlyLayout();
+  public curve: any = shape.curveBasis;
+
   public links: Edge[] = [
     {
       id: 'a',
