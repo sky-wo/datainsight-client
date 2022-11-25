@@ -32,13 +32,11 @@
   </div>
 
   <div *ngIf="currentlySelectedTab" class="card-detail">
-    <nz-card [nzExtra]="extraTemplate" nzTitle="标签详情">
-      <p>标签规则</p>
-
+    <nz-card [nzExtra]="extraTemplate" nzTitle="{{currentlySelectedTab.name}}">
+      <p></p>
       <div *ngFor="let rule of currentlySelectedTab?.rules?.items" class="">
         {{rule.content}}
       </div>
-
     </nz-card>
     <ng-template #extraTemplate>
       <a>排序</a>
