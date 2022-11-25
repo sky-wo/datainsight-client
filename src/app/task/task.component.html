@@ -1,4 +1,4 @@
-<!-- <button nz-button nzType="primary" (click)="creatTask()">创建任务</button> -->
+<button nz-button nzType="primary" [routerLink]="['/frame/task/addTask']">创建任务</button>
 <nz-table #nestedTable [nzData]="listData" [(nzPageIndex)]="pageIndex" [(nzPageSize)]="pageSize" [nzTotal]="totalData"
   [nzFrontPagination]="false" (nzPageIndexChange)="pageChange()">
   <thead>

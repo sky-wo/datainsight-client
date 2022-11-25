@@ -1,7 +1,5 @@
-import {Component, OnInit} from '@angular/core';
-import {Router} from '@angular/router';
-import {Connector} from 'src/app/core/type/graphql-type';
-import {ConnectorService} from "../../core/service/connector.service";
+import { Component, OnInit } from '@angular/core';
+import { ActorService } from 'src/app/core/service/actor.service';
 
 @Component({
   selector: 'app-add-connector',
@@ -10,29 +8,18 @@ import {ConnectorService} from "../../core/service/connector.service";
 })
 export class AddActorComponent implements OnInit {
 
-  dataList!: readonly Connector[];
-  selectChoose: String = ""
-
-  constructor(private connectorService: ConnectorService, private route: Router) {
-  }
-
-  ngOnInit(): void {
-    this.loadConnectorList()
-  }
-
-  nextChoose() {
-    this.route.navigate(["/frame/actor/spec/", this.selectChoose])
-  }
-
-  loadConnectorList() {
-    this.connectorService.pagingQueryConnectors(100, 0).valueChanges.subscribe({
-      next: r => {
-        this.dataList = r.data.connectors.items
-      },
-      error: e => {
-        console.error(e)
-      }
+  current = 0;
+  constructor(private actor: ActorService) {
+    this.actor.currentStep$.subscribe(r => {
+      this.current = r
     })
   }
 
+  ngOnInit(): void {
+  }
+
+
+  get getStepItems() {
+    return this.actor.stepItems
+  }
 }

@@ -8,7 +8,7 @@ import {AddActorComponent} from "./add-actor/add-actor.component";
 import {ActorListComponent} from "./actor-list/actor-list.component";
 import {JsonformsModule} from "@skywo/jsonforms";
 import {JsonformsrenderZorroModule} from "@skywo/jsonformsrenderzorro";
-import {SelectTableComponent} from "./select-tableselect-table/select-table.component";
+import { SelectConnectorComponent } from './select-connector/select-connector.component';
 
 
 @NgModule({
@@ -17,7 +17,7 @@ import {SelectTableComponent} from "./select-tableselect-table/select-table.comp
     SpecComponent,
     AddActorComponent,
     ActorListComponent,
-    SelectTableComponent
+    SelectConnectorComponent
 
   ],
   imports: [

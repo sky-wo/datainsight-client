@@ -70,17 +70,6 @@ export class ConnectorComponent implements OnInit {
         image: this.validateForm.value.image,
         version: this.validateForm.value.version
       }
-      // this.mutationAddConnector.mutate({ connectorInput: connector }).subscribe(
-      //   {
-      //     next: r => {
-      //       this.isOkLoading = false
-      //       this.isVisible = false
-      //     },
-      //     error: e => {
-      //       console.error(e)
-      //     }
-      //   }
-      // )
       this.connectorService.addConnector(connector).subscribe({
         next: _ => {
           this.isOkLoading = false
@@ -122,8 +111,4 @@ export class ConnectorComponent implements OnInit {
       }
     })
   }
-
-
-
-
 }

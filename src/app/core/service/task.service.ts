@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { Apollo, gql, MutationResult, QueryRef } from "apollo-angular";
-import { BehaviorSubject, combineLatest, filter, map, Observable } from 'rxjs';
+import { BehaviorSubject, combineLatest, distinctUntilChanged, filter, map, Observable } from 'rxjs';
 import { Task } from "../type/graphql-type";
 import {
   ConfiguredDataInsightCatalog,
@@ -10,12 +10,37 @@ import {
   TaskRunsPage,
   TasksPage
 } from "../type/graphql-type";
+import { IStepItems } from './actor.service';
 
 
 @Injectable({
   providedIn: 'root'
 })
 export class TaskService {
+  stepItems: IStepItems[] = [
+    {
+      name: "选择actor",
+      step: 0
+    },
+    //后续添加
+    // {
+    //   name: "选择规则",
+    //   step: 1
+    // }
+    {
+      name: "选择表",
+      step: 1
+    }
+  ]
+
+  private currentStepSource = new BehaviorSubject<number>(0)
+  currentStep$ = this.currentStepSource.asObservable().pipe(
+    distinctUntilChanged((pre, next) => pre === next)
+  )
+
+  private selectActorSource = new BehaviorSubject<string>('')
+  // selectConnector$ = this.selectConnectorSource.asObservable()
+
 
   addTaskInput$!: Observable<TaskInput>;
   private actorIdSource: BehaviorSubject<string> = new BehaviorSubject<string>("")
@@ -31,6 +56,10 @@ export class TaskService {
 
   supervisorConfig$: Observable<string> = this.supervisorConfigSource.asObservable()
 
+
+
+
+
   constructor(private apollo: Apollo) {
     this.addTaskInput$ = combineLatest([this.actorId$, this.configuredCatalog$, this.inspectorConfig$, this.supervisorConfig$]).pipe(map(([actorId, catalog, inspector, supervisor]) => {
       const res: TaskInput = {
@@ -38,6 +67,22 @@ export class TaskService {
       }
       return res
     }))
+  }
+
+  get getCurrentStep() {
+    return this.currentStepSource.value
+  }
+
+  get getselectActor() {
+    return this.selectActorSource.value
+  }
+
+  toggleCurrentStep(value: number) {
+    this.currentStepSource.next(value)
+  }
+
+  toggleSelectActor(value: string) {
+    this.selectActorSource.next(value)
   }
 
   toggleActorId(id: string) {

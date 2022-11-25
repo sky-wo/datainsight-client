@@ -1,7 +1,13 @@
-<nz-card>
-  <nz-select [(ngModel)]="selectChoose">
-    <nz-option *ngFor="let connector of this.dataList" [nzValue]="connector.id" [nzLabel]="connector.name">
-    </nz-option>
-  </nz-select>
-  <button nz-button nzType="primary" (click)="nextChoose()">下一步</button>
-</nz-card>
+<div class="actor-wapepr">
+  <div class="steps">
+    <nz-steps [nzCurrent]="current">
+      <nz-step *ngFor="let item of getStepItems" [nzTitle]="item.name"></nz-step>
+    </nz-steps>
+    <div class="steps-content">
+      <ng-container [ngSwitch]="current">
+        <app-select-connector *ngSwitchCase="0"></app-select-connector>
+        <app-spec *ngSwitchCase="1"></app-spec>
+      </ng-container>
+    </div>
+  </div>
+</div>
