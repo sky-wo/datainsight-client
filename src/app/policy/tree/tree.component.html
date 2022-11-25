@@ -1,34 +1,56 @@
-<ngx-graph
-  [links]="links"
-  [nodes]="nodes"
-  [view]="[800, 550]"
-  [curve]="curve"
+<div *ngIf="!isLoaded" class="main">
+  <nz-spin *ngIf="!isLoaded" [nzSize]="'large'"></nz-spin>
+</div>
 
-class="chart-container"
-  layout="dagreCluster"
-  xmlns:svg="">
+<div *ngIf="isLoaded" class="main">
 
-  <ng-template #nodeTemplate let-node>
-    <svg:g class="node">
-      <svg:rect
-        [attr.fill]="node.data.color"
-        [attr.height]="node.dimension.height"
-        [attr.width]="node.dimension.width"
-      />
-      <svg:text [attr.x]="10" [attr.y]="node.dimension.height / 2" alignment-baseline="central">
-        {{node.label}}
-      </svg:text>
-    </svg:g>
-  </ng-template>
+  <div class="tree">
+    <ngx-graph
+      [curve]="curve"
+      [draggingEnabled]="false"
+      [enableZoom]="false"
+      [links]="links"
+      [nodes]="nodes"
+      [panningEnabled]="false"
+      class="chart-container"
+      xmlns:svg="">
 
-</ngx-graph>
+      <ng-template #nodeTemplate let-node>
+        <svg:g (click)="clickNode(node)" class="node">
+          <svg:rect
+            [attr.fill]="node.data.color"
+            [attr.height]="node.dimension.height"
+            [attr.width]="node.dimension.width"
+          />
+          <svg:text [attr.x]="10" [attr.y]="node.dimension.height / 2" alignment-baseline="central">
+            {{node.label}}
+          </svg:text>
+        </svg:g>
+      </ng-template>
+
+    </ngx-graph>
+  </div>
+
+  <div *ngIf="currentlySelectedTab" class="card-detail">
+    <nz-card [nzExtra]="extraTemplate" nzTitle="标签详情">
+      <p>标签规则</p>
+
+      <div *ngFor="let rule of currentlySelectedTab?.rules?.items" class="">
+        {{rule.content}}
+      </div>
+
+    </nz-card>
+    <ng-template #extraTemplate>
+      <a>排序</a>
+    </ng-template>
+  </div>
+
+</div>
 
 
 <!--<ngx-graph-->
 <!--  [autoZoom]="true"-->
 <!--  [curve]="curve"-->
-<!--  [draggingEnabled]="false"-->
-<!--  [enableZoom]="true"-->
 <!--  [layout]="layout"-->
 <!--  [links]="links"-->
 <!--  [nodes]="nodes"-->

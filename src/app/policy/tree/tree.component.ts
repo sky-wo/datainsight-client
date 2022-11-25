@@ -20,6 +20,11 @@ export class TreeComponent implements OnInit {
   public links: Edge[] = []
   public nodes: Node[] = []
 
+  isLoaded = false
+
+  currentlySelectedTab: DataTag | null = null
+
+
   constructor(private policyService: PolicyService, private notification: NzNotificationService) {
   }
 
@@ -34,17 +39,25 @@ export class TreeComponent implements OnInit {
         for (let i = 0; i < this.originalData.length; i++) {
           // 深拷贝 解决属性不可扩展的错误
           this.originalDataCopy.push(JSON.parse(JSON.stringify(this.originalData[i])))
-          let myObj = {id: this.originalData[i].id, data: this.originalDataCopy[i], label: this.originalDataCopy[i].name}
+          let myObj = {
+            id: this.originalData[i].id, data: this.originalDataCopy[i], label: this.originalDataCopy[i].name
+          }
           this.nodes.push(myObj)
           if (this.originalData[i].parentId) {
             let myObj = {source: this.originalData[i].parentId!, target: this.originalData[i].id}
             this.links.push(myObj)
           }
         }
+        this.isLoaded = true
       }, error: e => {
         console.error(e)
       }
     })
+  }
+
+  clickNode(node: Node) {
+    this.currentlySelectedTab = node.data
+    console.log(node)
   }
 
 }
