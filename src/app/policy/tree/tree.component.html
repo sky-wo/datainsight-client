@@ -1,36 +1,60 @@
 <ngx-graph
-  [autoZoom]="true"
-  [curve]="curve"
-  [draggingEnabled]="false"
-  [enableZoom]="true"
-  [layout]="layout"
   [links]="links"
-  [nodeHeight]="30"
-  [nodeWidth]="30"
   [nodes]="nodes"
-  [view]="[2000, 3000]"
-  class="chart-container"
->
+  [view]="[800, 550]"
+  [curve]="curve"
+
+class="chart-container"
+  layout="dagreCluster"
+  xmlns:svg="">
 
   <ng-template #nodeTemplate let-node>
-    <svg height="30" width="60" xmlns="http://www.w3.org/2000/svg">
-      <g>
-        <title>background</title>
-        <rect fill="#fff" height="32" id="canvas_background" width="62" x="-1" y="-1"/>
-        <g display="none" height="100%" id="canvasGrid" overflow="visible" width="100%" x="0" y="0">
-          <rect fill="url(#gridpattern)" height="100%" stroke-width="0" width="100%" x="0" y="0"/>
-        </g>
-      </g>
-      <g>
-        <title>Layer 1</title>
-        <text fill="#000000" font-family="Helvetica, Arial, sans-serif" font-size="24"
-              id="svg_1" stroke="#000" stroke-width="0" text-anchor="start"
-              transform="matrix(0.383209, 0, 0, 0.401218, 12.6506, 0.973533)"
-              x="-2.73151" xml:space="preserve" y="43.90354">我是标签</text>
-      </g>
-    </svg>
-
+    <svg:g class="node">
+      <svg:rect
+        [attr.fill]="node.data.color"
+        [attr.height]="node.dimension.height"
+        [attr.width]="node.dimension.width"
+      />
+      <svg:text [attr.x]="10" [attr.y]="node.dimension.height / 2" alignment-baseline="central">
+        {{node.label}}
+      </svg:text>
+    </svg:g>
   </ng-template>
 
-
 </ngx-graph>
+
+
+<!--<ngx-graph-->
+<!--  [autoZoom]="true"-->
+<!--  [curve]="curve"-->
+<!--  [draggingEnabled]="false"-->
+<!--  [enableZoom]="true"-->
+<!--  [layout]="layout"-->
+<!--  [links]="links"-->
+<!--  [nodes]="nodes"-->
+<!--  class="chart-container"-->
+<!--  xmlns:svg="">-->
+<!--  &lt;!&ndash;  [view]="[2000, 3000]"&ndash;&gt;-->
+<!--  &lt;!&ndash;  [nodeHeight]="30"&ndash;&gt;-->
+<!--  &lt;!&ndash;  [nodeWidth]="30"&ndash;&gt;-->
+
+<!--  &lt;!&ndash;    <ng-template #nodeTemplate let-node>&ndash;&gt;-->
+<!--  &lt;!&ndash;      <svg height="30" width="60" xmlns="http://www.w3.org/2000/svg">&ndash;&gt;-->
+<!--  &lt;!&ndash;        <g>&ndash;&gt;-->
+<!--  &lt;!&ndash;          <title>background</title>&ndash;&gt;-->
+<!--  &lt;!&ndash;          <rect fill="#fff" height="32" id="canvas_background" width="62" x="-1" y="-1"/>&ndash;&gt;-->
+<!--  &lt;!&ndash;          <g display="none" height="100%" id="canvasGrid" overflow="visible" width="100%" x="0" y="0">&ndash;&gt;-->
+<!--  &lt;!&ndash;            <rect fill="url(#gridpattern)" height="100%" stroke-width="0" width="100%" x="0" y="0"/>&ndash;&gt;-->
+<!--  &lt;!&ndash;          </g>&ndash;&gt;-->
+<!--  &lt;!&ndash;        </g>&ndash;&gt;-->
+<!--  &lt;!&ndash;        <g>&ndash;&gt;-->
+<!--  &lt;!&ndash;          <title>Layer 1</title>&ndash;&gt;-->
+<!--  &lt;!&ndash;          <text fill="#000000" font-family="Helvetica, Arial, sans-serif" font-size="24"&ndash;&gt;-->
+<!--  &lt;!&ndash;                id="svg_1" stroke="#000" stroke-width="0" text-anchor="start"&ndash;&gt;-->
+<!--  &lt;!&ndash;                transform="matrix(0.383209, 0, 0, 0.401218, 12.6506, 0.973533)"&ndash;&gt;-->
+<!--  &lt;!&ndash;                x="-2.73151" xml:space="preserve" y="43.90354"> 666</text>&ndash;&gt;-->
+<!--  &lt;!&ndash;        </g>&ndash;&gt;-->
+<!--  &lt;!&ndash;      </svg>&ndash;&gt;-->
+<!--  &lt;!&ndash;    </ng-template>&ndash;&gt;-->
+
+<!--</ngx-graph>-->
