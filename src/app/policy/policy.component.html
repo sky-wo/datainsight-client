@@ -1,46 +1,11 @@
-<div class="example-container">
-  <h2>To do</h2>
-
-  <div
-    #todoList="cdkDropList"
-    (cdkDropListDropped)="drop($event)"
-    [cdkDropListConnectedTo]="[doneList]"
-    [cdkDropListData]="todo"
-    cdkDropList
-    class="example-list">
-    <div *ngFor="let item of todo" cdkDrag class="example-box">{{item}}</div>
-  </div>
-</div>
-
-<div class="example-container">
-  <h2>Done</h2>
-
-  <div
-    #doneList="cdkDropList"
-    (cdkDropListDropped)="drop($event)"
-    [cdkDropListConnectedTo]="[todoList]"
-    [cdkDropListData]="done"
-    cdkDropList
-    class="example-list">
-    <div *ngFor="let item of done" cdkDrag class="example-box">{{item}}</div>
-  </div>
-</div>
-
-<div class="example-container">
-  <h2>Done2</h2>
-
-  <div
-    #doneList="cdkDropList"
-    (cdkDropListDropped)="drop($event)"
-    [cdkDropListConnectedTo]="[doneList]"
-    [cdkDropListData]="done2"
-    cdkDropList
-    class="example-list">
-    <div *ngFor="let item of done" cdkDrag class="example-box">{{item}}</div>
-  </div>
-</div>
-
-<!--<div cdkDropListGroup>-->
-<!--  &lt;!&ndash; All lists in here will be connected. &ndash;&gt;-->
-<!--  <div cdkDropList *ngFor="let list of lists"></div>-->
-<!--</div>-->
+<nz-tree
+  [nzData]="nodes"
+  nzCheckable
+  nzMultiple
+  [nzCheckedKeys]="defaultCheckedKeys"
+  [nzExpandedKeys]="defaultExpandedKeys"
+  [nzSelectedKeys]="defaultSelectedKeys"
+  (nzClick)="nzEvent($event)"
+  (nzExpandChange)="nzEvent($event)"
+  (nzCheckBoxChange)="nzEvent($event)"
+></nz-tree>
