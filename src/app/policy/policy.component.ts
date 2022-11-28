@@ -12,7 +12,7 @@ import {NzNotificationService} from "ng-zorro-antd/notification";
 })
 export class PolicyComponent implements OnInit, AfterViewInit {
 
-  @ViewChild('nzTreeComponent') nzTreeComponent:any
+  @ViewChild('nzTreeComponent') nzTreeComponent: any
   defaultCheckedKeys = ['10020'];
   defaultSelectedKeys = [];
   defaultExpandedKeys = [];
@@ -47,7 +47,6 @@ export class PolicyComponent implements OnInit, AfterViewInit {
     })
   }
 
-
   convertedToTree(pid = '') {
     if (!pid) {
       // 如果没有父id（第一次递归的时候）将所有父级查询出来
@@ -75,20 +74,24 @@ export class PolicyComponent implements OnInit, AfterViewInit {
   }
 
   nzEvent(event: NzFormatEmitEvent): void {
-    // console.log(event);
-    console.log(this.nzTreeComponent.getSelectedNodeList())
   }
 
   ngAfterViewInit(): void {
-    // // get node by key: '10011'
-    // console.log(this.nzTreeComponent.getTreeNodeByKey('10011'));
-    // // use tree methods
-    // console.log(
-    //   this.nzTreeComponent.getTreeNodes(),
-    //   this.nzTreeComponent.getCheckedNodeList(),
-    //   this.nzTreeComponent.getSelectedNodeList(),
-    //   this.nzTreeComponent.getExpandedNodeList()
-    // );
+  }
+
+  readNodes(nodes: any[], arr: any[]) {
+    for (let item of nodes) {
+      arr.push(item.key)
+      if (item.children && item.children.length) this.readNodes(item.children, arr)
+    }
+    return arr
+  }
+
+
+  clickMe() {
+    console.log(this.nzTreeComponent.getCheckedNodeList())
+    console.log(this.readNodes(this.nzTreeComponent.getCheckedNodeList(), []))
+
 
   }
 

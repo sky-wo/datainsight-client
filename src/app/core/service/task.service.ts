@@ -23,11 +23,11 @@ export class TaskService {
       step: 0
     },
     {
-      name: "选择表",
+      name: "确定检查策略",
       step: 1
     },
     {
-      name: "确定检查策略",
+      name: "选择表",
       step: 2
     }
   ]
