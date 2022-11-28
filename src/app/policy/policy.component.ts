@@ -1,6 +1,6 @@
-import {Component, OnInit} from '@angular/core';
+import {AfterViewInit, Component, OnInit, ViewChild} from '@angular/core';
 import {CdkDragDrop, moveItemInArray, transferArrayItem} from '@angular/cdk/drag-drop';
-import {NzFormatEmitEvent} from "ng-zorro-antd/tree";
+import {NzFormatEmitEvent, NzTreeComponent} from "ng-zorro-antd/tree";
 import {DataTag} from "../core/type/graphql-type";
 import {PolicyService} from "../core/service/policy.service";
 import {NzNotificationService} from "ng-zorro-antd/notification";
@@ -10,9 +10,10 @@ import {NzNotificationService} from "ng-zorro-antd/notification";
   templateUrl: './policy.component.html',
   styleUrls: ['./policy.component.less']
 })
-export class PolicyComponent implements OnInit {
+export class PolicyComponent implements OnInit, AfterViewInit {
 
-  defaultCheckedKeys = [];
+  @ViewChild('nzTreeComponent') nzTreeComponent:any
+  defaultCheckedKeys = ['10020'];
   defaultSelectedKeys = [];
   defaultExpandedKeys = [];
   nodes: any [] = []
@@ -74,7 +75,21 @@ export class PolicyComponent implements OnInit {
   }
 
   nzEvent(event: NzFormatEmitEvent): void {
-    console.log(event);
+    // console.log(event);
+    console.log(this.nzTreeComponent.getSelectedNodeList())
+  }
+
+  ngAfterViewInit(): void {
+    // // get node by key: '10011'
+    // console.log(this.nzTreeComponent.getTreeNodeByKey('10011'));
+    // // use tree methods
+    // console.log(
+    //   this.nzTreeComponent.getTreeNodes(),
+    //   this.nzTreeComponent.getCheckedNodeList(),
+    //   this.nzTreeComponent.getSelectedNodeList(),
+    //   this.nzTreeComponent.getExpandedNodeList()
+    // );
+
   }
 
 }
