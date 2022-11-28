@@ -265,7 +265,45 @@ export class TaskService {
       }
     })
   }
-
+  queryTasksAlert(first: number, skip: number): QueryRef<{ tasks: TasksPage }, { first: number, skip: number }> {
+    return this.apollo.watchQuery({
+      query: gql`
+        query ($first: Int!, $skip: Long!) {
+          tasks(first: $first, skip: $skip) {
+            total
+            items{
+              id,
+              actor{
+                name
+              }
+            counter{
+              id,
+              streams{
+                id,
+                stream,
+                counters{
+                  name,
+                  value
+                }
+              }
+              streamProperties{
+                id,
+                stream,
+                property,
+                counters{
+                  name,
+                  value
+                }
+              }
+            }
+            }
+          }
+        }
+      `, variables: {
+        first, skip
+      }
+    })
+  }
   queryTaskRunsByTaskId(id: string, taskRunFirst: number, skip: number, logsFirst: number, after: string): QueryRef<{ task: Task }, { id: string, taskRunFirst: number, skip: number, logsFirst: number, after: string }> {
     return this.apollo.watchQuery({
       query: gql`

@@ -1,6 +1,6 @@
-import {NgModule} from '@angular/core';
-import {RouterModule, Routes} from '@angular/router';
-import {FrameComponent} from './shared/frame/frame.component'
+import { NgModule } from '@angular/core';
+import { RouterModule, Routes } from '@angular/router';
+import { FrameComponent } from './shared/frame/frame.component'
 
 const routes: Routes = [
   {
@@ -36,6 +36,10 @@ const routes: Routes = [
       {
         path: "policy",
         loadChildren: () => import("./policy/policy.module").then(m => m.PolicyModule)
+      },
+      {
+        path: "alert",
+        loadChildren: () => import("./alert/alert.module").then(m => m.AlertModule)
       },
     ]
   }

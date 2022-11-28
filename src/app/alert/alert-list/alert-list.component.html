@@ -1,0 +1,42 @@
+<nz-table #basicTable [nzData]="items">
+    <thead>
+        <tr>
+            <th>所属库</th>
+            <th>所属表</th>
+            <th>违规列</th>
+            <th>详情</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr *ngFor="let data of basicTable.data;let index=index">
+            <td>{{data.database}}</td>
+            <td>{{data.table}}</td>
+            <td>{{data.tableRow}}</td>
+            <td>
+                <button nz-button [nzType]="'primary'" (click)="showModal(index)"><span>Show Modal</span></button>
+            </td>
+        </tr>
+    </tbody>
+</nz-table>
+
+
+<nz-modal [(nzVisible)]="isVisible" nzTitle="违规标签详情" (nzOnCancel)="handleCancel()" (nzOnOk)="handleOk()">
+    <ng-container *nzModalContent>
+        <nz-table #tagTable [nzData]="alertItems">
+            <thead>
+                <tr>
+                    <th>标签名称</th>
+                    <th>标签等级</th>
+                    <th>命中次数</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr *ngFor="let data of tagTable.data">
+                    <td>{{data.tagName}}</td>
+                    <td>{{data.tagLevel}}</td>
+                    <td>{{data.count}}</td>
+                </tr>
+            </tbody>
+        </nz-table>
+    </ng-container>
+</nz-modal>
