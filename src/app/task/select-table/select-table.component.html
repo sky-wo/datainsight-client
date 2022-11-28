@@ -55,5 +55,10 @@
     </ng-container>
 </nz-modal>
 
-<button nz-button nzType="primary" (click)="submitTable()">提交
-</button>
+<div class="actions">
+  <button (click)="prevStep()" nz-button nzType="default">上一步</button>
+  <button (click)="finish()" [nzType]="'primary'" nz-button>
+    完成
+  </button>
+</div>
+

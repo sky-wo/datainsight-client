@@ -1,9 +1,7 @@
-import { Component, OnInit } from '@angular/core';
-import { Router } from '@angular/router';
-import { ActorService } from 'src/app/core/service/actor.service';
-import { ConnectorService } from 'src/app/core/service/connector.service';
-import { TaskService } from 'src/app/core/service/task.service';
-import { Actor, Connector } from 'src/app/core/type/graphql-type';
+import {Component, OnInit} from '@angular/core';
+import {TaskService} from 'src/app/core/service/task.service';
+import {Actor, ActorPage} from 'src/app/core/type/graphql-type';
+import {Apollo, gql, QueryRef} from "apollo-angular";
 
 @Component({
   selector: 'app-select-actor',
@@ -12,29 +10,48 @@ import { Actor, Connector } from 'src/app/core/type/graphql-type';
 })
 export class SelectActorComponent implements OnInit {
 
-  dataList!: readonly Actor[];
+  actors!: readonly Actor[];
 
-  selectChoose: string = ""
+  currentActorId: string | undefined
 
-  constructor(private taskService: TaskService, private actor: ActorService, private actorService: ActorService) { }
+  constructor(private taskService: TaskService, private apollo: Apollo) {
+  }
+
   ngOnInit(): void {
     this.loadActorList()
   }
 
-  nextChoose() {
-    // this.route.navigate(["/frame/actor/spec/", this.selectChoose])
-    this.taskService.toggleSelectActor(this.selectChoose)
-    this.taskService.toggleCurrentStep(this.actor.getCurrentStep + 1)
-  }
-
   loadActorList() {
-    this.actorService.queryActorsName(100, 0).valueChanges.subscribe({
+    this.queryActors(100, 0).valueChanges.subscribe({
       next: r => {
-        this.dataList = r.data.actors.items
-      },
-      error: e => {
+        this.actors = r.data.actors.items
+      }, error: e => {
         console.error(e)
       }
     })
   }
+
+  queryActors(first: number, skip: number): QueryRef<{ actors: ActorPage }, { first: number, skip: number }> {
+    return this.apollo.watchQuery({
+      query: gql`
+        query ($first: Int!, $skip: Long!) {
+          actors(first: $first, skip: $skip) {
+            total
+            items {
+              id
+              name
+            }
+          }
+        }
+      `, variables: {
+        first, skip
+      }
+    })
+  }
+
+  nextStep() {
+    this.taskService.toggleSelectActor(this.currentActorId!)
+    this.taskService.nextStep()
+  }
+
 }

@@ -1,17 +1,16 @@
-import { Component, OnInit } from '@angular/core';
-import { TaskService } from 'src/app/core/service/task.service';
+import {Component, OnInit} from '@angular/core';
+import {TaskService} from 'src/app/core/service/task.service';
 
 @Component({
-  selector: 'app-add-task',
-  templateUrl: './add-task.component.html',
-  styleUrls: ['./add-task.component.less']
+  selector: 'app-add-task', templateUrl: './add-task.component.html', styleUrls: ['./add-task.component.less']
 })
 export class AddTaskComponent implements OnInit {
 
-  current = 0;
+  currentStep = 0;
+
   constructor(private taskService: TaskService) {
     this.taskService.currentStep$.subscribe(r => {
-      this.current = r
+      this.currentStep = r
     })
   }
 
@@ -19,7 +18,4 @@ export class AddTaskComponent implements OnInit {
   }
 
 
-  get getStepItems() {
-    return this.taskService.stepItems
-  }
 }

@@ -1,16 +1,24 @@
-<div class="task-wapepr">
-    <div class="steps">
-        <nz-steps [nzCurrent]="current">
-            <nz-step *ngFor="let item of getStepItems" [nzTitle]="item.name"></nz-step>
-        </nz-steps>
-        <div class="steps-content">
-            <ng-container [ngSwitch]="current">
-                <!-- <app-select-connector *ngSwitchCase="0"></app-select-connector>
-                <app-spec *ngSwitchCase="1"></app-spec> -->
-              <app-select-actor *ngSwitchCase="0"></app-select-actor>
-              <app-select-policy *ngSwitchCase="1"></app-select-policy>
-              <app-select-table *ngSwitchCase="2"></app-select-table>
-            </ng-container>
-        </div>
-    </div>
-</div>
+<nz-card>
+  <nz-steps [nzCurrent]="currentStep">
+    <nz-step nzDescription="" nzTitle="选择数据源"></nz-step>
+    <nz-step nzDescription="" nzTitle="选择标签"></nz-step>
+    <nz-step nzDescription="" nzTitle="选择表"></nz-step>
+  </nz-steps>
+</nz-card>
+
+<nz-card style="margin-top: 24px">
+  <div [hidden]="currentStep != 0">
+    <app-select-actor
+      class="step-content"
+    ></app-select-actor>
+  </div>
+  <div [hidden]="currentStep != 1">
+    <app-select-policy
+      class="step-content"
+    ></app-select-policy>
+  </div>
+  <div [hidden]="currentStep != 2">
+    <app-select-table></app-select-table>
+  </div>
+</nz-card>
+

@@ -11,5 +11,14 @@
     nzCheckable
     nzMultiple
   ></nz-tree>
-  <button nz-button nzType="primary" (click)="nextChoose()">下一步</button>
+
+  <div class="actions">
+    <button (click)="prevStep()" nz-button nzType="default">上一步</button>
+    <button (click)="nextStep()" [disabled]="this.nzTreeComponent.getCheckedNodeList().length == 0" [nzType]="'primary'"
+            nz-button>
+      下一步
+    </button>
+  </div>
+
 </nz-card>
+

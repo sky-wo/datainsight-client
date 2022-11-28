@@ -67,8 +67,6 @@ export class ActorService {
 
 
 
-
-
   /**
    * @return  id
    * */
@@ -177,26 +175,6 @@ export class ActorService {
                   supportedSyncModes
                 }
               }
-            }
-          }
-        }
-      `,
-      variables: {
-        first,
-        skip
-      }
-    })
-  }
-
-  queryActorsName(first: number, skip: number): QueryRef<{ actors: ActorPage }, { first: number, skip: number }> {
-    return this.apollo.watchQuery({
-      query: gql`
-        query ($first: Int!, $skip: Long!) {
-          actors(first: $first, skip: $skip) {
-            total
-            items {
-              id
-              name
             }
           }
         }

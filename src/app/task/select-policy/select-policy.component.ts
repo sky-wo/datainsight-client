@@ -12,7 +12,7 @@ import {NzFormatEmitEvent} from "ng-zorro-antd/tree";
 export class SelectPolicyComponent implements OnInit {
 
   @ViewChild('nzTreeComponent') nzTreeComponent: any
-  defaultCheckedKeys = ['10020'];
+  defaultCheckedKeys = [];
   defaultSelectedKeys = [];
   defaultExpandedKeys = [];
   nodes: any [] = []
@@ -26,6 +26,12 @@ export class SelectPolicyComponent implements OnInit {
     this.loadAllPolicys()
   }
 
+  nzEvent(event: NzFormatEmitEvent): void {
+  }
+
+  ngAfterViewInit(): void {
+  }
+
   loadAllPolicys() {
     this.policyService.pagingQueryDataTags(200, 0).valueChanges.subscribe({
       next: r => {
@@ -33,10 +39,7 @@ export class SelectPolicyComponent implements OnInit {
         this.intermediateDataForConvertedToTree = this.originalData.map(item => {
           let parentId = item.parentId ? item.parentId : ''
           return {
-            key: item.id,
-            title: item.name,
-            parentId: parentId,
-            isLeaf: this.isLeaf(item.id)
+            key: item.id, title: item.name, parentId: parentId, isLeaf: this.isLeaf(item.id)
           }
         })
         this.nodes = this.convertedToTree()
@@ -66,32 +69,30 @@ export class SelectPolicyComponent implements OnInit {
   isLeaf(datatagId: string) {
     let isLeaf = true
     for (let dataTag2 of this.originalData) {
-      if (dataTag2.parentId == datatagId)
-        isLeaf = false
+      if (dataTag2.parentId == datatagId) isLeaf = false
     }
     return isLeaf
   }
 
-  nzEvent(event: NzFormatEmitEvent): void {
-  }
-
-  ngAfterViewInit(): void {
-  }
-
-  readNodes(nodes: any[], arr: any[]) {
+  flatTree(nodes: any[], arr: any[]) {
     for (let item of nodes) {
       arr.push(item.key)
-      if (item.children && item.children.length) this.readNodes(item.children, arr)
+      if (item.children && item.children.length) this.flatTree(item.children, arr)
     }
     return arr
   }
 
-  nextChoose() {
-    let flattenedNodes = this.readNodes(this.nzTreeComponent.getCheckedNodeList(), [])
+  prevStep() {
+    this.taskService.prevStep()
+  }
+
+  nextStep() {
+    let flattenedNodes = this.flatTree(this.nzTreeComponent.getCheckedNodeList(), [])
     let config = {
       enabledDataTagIds: flattenedNodes
     }
     this.taskService.toggleInspectorConfig(config)
-    this.taskService.toggleCurrentStep(this.taskService.getCurrentStep + 1)
+    this.taskService.nextStep()
   }
+
 }

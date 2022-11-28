@@ -1,47 +1,29 @@
-import { Injectable } from '@angular/core';
-import { Apollo, gql, MutationResult, QueryRef } from "apollo-angular";
-import { BehaviorSubject, combineLatest, distinctUntilChanged, filter, map, Observable } from 'rxjs';
-import { Task } from "../type/graphql-type";
+import {Injectable} from '@angular/core';
+import {Apollo, gql, MutationResult, QueryRef} from "apollo-angular";
+import {BehaviorSubject, combineLatest, distinctUntilChanged, filter, map, Observable} from 'rxjs';
 import {
   ConfiguredDataInsightCatalog,
   ConfiguredDataInsightCatalogInput,
+  Task,
   TaskInput,
   TaskInspectorConfig,
-  TaskRunsPage,
   TasksPage
 } from "../type/graphql-type";
-import { IStepItems } from './actor.service';
-
 
 @Injectable({
   providedIn: 'root'
 })
 export class TaskService {
-  stepItems: IStepItems[] = [
-    {
-      name: "选择actor",
-      step: 0
-    },
-    {
-      name: "确定检查策略",
-      step: 1
-    },
-    {
-      name: "选择表",
-      step: 2
-    }
-  ]
 
+  addTaskInput$!: Observable<TaskInput>;
   private currentStepSource = new BehaviorSubject<number>(0)
   currentStep$ = this.currentStepSource.asObservable().pipe(
     distinctUntilChanged((pre, next) => pre === next)
   )
-
-  private selectActorSource = new BehaviorSubject<string>('')
   // selectConnector$ = this.selectConnectorSource.asObservable()
 
 
-  addTaskInput$!: Observable<TaskInput>;
+  private selectActorSource = new BehaviorSubject<string>('')
   private actorIdSource: BehaviorSubject<string> = new BehaviorSubject<string>("")
 
   actorId$: Observable<string> = this.actorIdSource.asObservable().pipe(filter(r => r !== ""))
@@ -56,9 +38,6 @@ export class TaskService {
   supervisorConfig$: Observable<string> = this.supervisorConfigSource.asObservable()
 
 
-
-
-
   constructor(private apollo: Apollo) {
     this.addTaskInput$ = combineLatest([this.actorId$, this.configuredCatalog$, this.inspectorConfig$, this.supervisorConfig$]).pipe(map(([actorId, catalog, inspector, supervisor]) => {
       const res: TaskInput = {
@@ -68,16 +47,16 @@ export class TaskService {
     }))
   }
 
-  get getCurrentStep() {
-    return this.currentStepSource.value
+  prevStep(){
+    this.currentStepSource.next(this.currentStepSource.value - 1)
+  }
+
+  nextStep(){
+    this.currentStepSource.next(this.currentStepSource.value + 1)
   }
 
   get getselectActor() {
     return this.selectActorSource.value
-  }
-
-  toggleCurrentStep(value: number) {
-    this.currentStepSource.next(value)
   }
 
   toggleSelectActor(value: string) {
@@ -99,14 +78,6 @@ export class TaskService {
   toggleSupervisorConfig(config: string) {
     this.supervisorConfigSource.next(config)
   }
-
-  // createTask() {
-  //   this.addTaskInput$.pipe(take(1)).subscribe(r => {
-  //     //创建任务
-  //     this.addTask(r).
-  //   })
-  // }
-
 
   /**
    * @return  id
@@ -265,6 +236,7 @@ export class TaskService {
       }
     })
   }
+
   queryTasksAlert(first: number, skip: number): QueryRef<{ tasks: TasksPage }, { first: number, skip: number }> {
     return this.apollo.watchQuery({
       query: gql`
@@ -276,26 +248,26 @@ export class TaskService {
               actor{
                 name
               }
-            counter{
-              id,
-              streams{
+              counter{
                 id,
-                stream,
-                counters{
-                  name,
-                  value
+                streams{
+                  id,
+                  stream,
+                  counters{
+                    name,
+                    value
+                  }
+                }
+                streamProperties{
+                  id,
+                  stream,
+                  property,
+                  counters{
+                    name,
+                    value
+                  }
                 }
               }
-              streamProperties{
-                id,
-                stream,
-                property,
-                counters{
-                  name,
-                  value
-                }
-              }
-            }
             }
           }
         }
@@ -304,27 +276,28 @@ export class TaskService {
       }
     })
   }
+
   queryTaskRunsByTaskId(id: string, taskRunFirst: number, skip: number, logsFirst: number, after: string): QueryRef<{ task: Task }, { id: string, taskRunFirst: number, skip: number, logsFirst: number, after: string }> {
     return this.apollo.watchQuery({
       query: gql`
         query($id:ID!,$taskRunFirst:Int!,$skip:Long!,$logsFirst:Int!,$after:ID!){
           task(id:$id){
-		        taskRuns (first:$taskRunFirst,skip:$skip){
-            total,
-            items{
-              id,
-              taskId,
-              state,
-              errorMessage,
-              logs(first:$logsFirst,after:$after){
-                items{
-                  id,
-                  message,
-                  taskId,
-                  taskRunId,
-                  level,
+            taskRuns (first:$taskRunFirst,skip:$skip){
+              total,
+              items{
+                id,
+                taskId,
+                state,
+                errorMessage,
+                logs(first:$logsFirst,after:$after){
+                  items{
+                    id,
+                    message,
+                    taskId,
+                    taskRunId,
+                    level,
+                  }
                 }
-              }
               }
             }
           }

@@ -103,8 +103,11 @@ export class SelectTableComponent implements OnInit {
     this.refreshCheckedStatus()
   }
 
-  //提交
-  submitTable() {
+  prevStep() {
+    this.taskService.prevStep()
+  }
+
+  finish() {
     const streamInput: ConfiguredDataInsightStreamInput[] = []
     Array.from(this.selectIds).forEach(r => {
       const cursorField: string[] = []

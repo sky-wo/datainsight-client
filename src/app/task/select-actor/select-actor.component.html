@@ -1,7 +1,13 @@
 <nz-card>
-    <nz-select [(ngModel)]="selectChoose">
-        <nz-option *ngFor="let connector of this.dataList" [nzValue]="connector.id" [nzLabel]="connector.name">
-        </nz-option>
-    </nz-select>
-    <button nz-button nzType="primary" (click)="nextChoose()">下一步</button>
+  <nz-select [(ngModel)]="currentActorId">
+    <nz-option *ngFor="let connector of this.actors" [nzLabel]="connector.name" [nzValue]="connector.id">
+    </nz-option>
+  </nz-select>
+
+  <div class="actions">
+    <button (click)="nextStep()" [disabled]="!this.currentActorId" [nzType]="'primary'" nz-button>
+      下一步
+    </button>
+  </div>
+
 </nz-card>
