@@ -1,16 +1,15 @@
-import {AfterViewInit, Component, OnInit, ViewChild} from '@angular/core';
-import {CdkDragDrop, moveItemInArray, transferArrayItem} from '@angular/cdk/drag-drop';
-import {NzFormatEmitEvent, NzTreeComponent} from "ng-zorro-antd/tree";
-import {DataTag} from "../core/type/graphql-type";
-import {PolicyService} from "../core/service/policy.service";
-import {NzNotificationService} from "ng-zorro-antd/notification";
+import {Component, OnInit, ViewChild} from '@angular/core';
+import {TaskService} from "../../core/service/task.service";
+import {DataTag} from "../../core/type/graphql-type";
+import {PolicyService} from "../../core/service/policy.service";
+import {NzFormatEmitEvent} from "ng-zorro-antd/tree";
 
 @Component({
-  selector: 'app-policy',
-  templateUrl: './policy.component.html',
-  styleUrls: ['./policy.component.less']
+  selector: 'app-select-policy',
+  templateUrl: './select-policy.component.html',
+  styleUrls: ['./select-policy.component.less']
 })
-export class PolicyComponent implements OnInit, AfterViewInit {
+export class SelectPolicyComponent implements OnInit {
 
   @ViewChild('nzTreeComponent') nzTreeComponent: any
   defaultCheckedKeys = ['10020'];
@@ -20,7 +19,7 @@ export class PolicyComponent implements OnInit, AfterViewInit {
   originalData: DataTag[] = []
   intermediateDataForConvertedToTree: any[] = []
 
-  constructor(private policyService: PolicyService, private notification: NzNotificationService) {
+  constructor(private policyService: PolicyService, private taskService: TaskService) {
   }
 
   ngOnInit(): void {
@@ -87,12 +86,12 @@ export class PolicyComponent implements OnInit, AfterViewInit {
     return arr
   }
 
-
-  clickMe() {
-    console.log(this.nzTreeComponent.getCheckedNodeList())
-    console.log(this.readNodes(this.nzTreeComponent.getCheckedNodeList(), []))
-
-
+  nextChoose() {
+    let flattenedNodes = this.readNodes(this.nzTreeComponent.getCheckedNodeList(), [])
+    let config = {
+      enabledDataTagIds: flattenedNodes
+    }
+    this.taskService.toggleInspectorConfig(config)
+    this.taskService.toggleCurrentStep(this.taskService.getCurrentStep + 1)
   }
-
 }

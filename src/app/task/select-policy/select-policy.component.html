@@ -1,0 +1,15 @@
+<nz-card>
+  <nz-tree
+    #nzTreeComponent
+    (nzCheckBoxChange)="nzEvent($event)"
+    (nzClick)="nzEvent($event)"
+    (nzExpandChange)="nzEvent($event)"
+    [nzCheckedKeys]="defaultCheckedKeys"
+    [nzData]="nodes"
+    [nzExpandedKeys]="defaultExpandedKeys"
+    [nzSelectedKeys]="defaultSelectedKeys"
+    nzCheckable
+    nzMultiple
+  ></nz-tree>
+  <button nz-button nzType="primary" (click)="nextChoose()">下一步</button>
+</nz-card>

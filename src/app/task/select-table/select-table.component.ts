@@ -131,10 +131,6 @@ export class SelectTableComponent implements OnInit {
     this.taskService.toggleConfiguredCatalog({
       streams: streamInput
     })
-    //展示提交方便测试，后续从Tag模块中选取
-    this.taskService.toggleInspectorConfig({
-      enabledDataTagIds: []
-    })
     this.taskService.addTaskInput$.pipe(take(1), switchMap((r) => this.taskService.addTask(r))).subscribe({
       next: _ => {
         this.message.create("success", `任务创建成功`);

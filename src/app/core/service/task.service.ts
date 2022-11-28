@@ -22,14 +22,13 @@ export class TaskService {
       name: "选择actor",
       step: 0
     },
-    //后续添加
-    // {
-    //   name: "选择规则",
-    //   step: 1
-    // }
+    {
+      name: "确定检查策略",
+      step: 1
+    },
     {
       name: "选择表",
-      step: 1
+      step: 2
     }
   ]
 
@@ -282,7 +281,7 @@ export class TaskService {
               logs(first:$logsFirst,after:$after){
                 items{
                   id,
-                  message,	
+                  message,
                   taskId,
                   taskRunId,
                   level,
