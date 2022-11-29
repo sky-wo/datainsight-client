@@ -1,7 +1,7 @@
-import { Injectable } from '@angular/core';
-import { Apollo, gql, MutationResult, QueryRef } from "apollo-angular";
-import { Actor, ActorInput, ActorPage } from "../type/graphql-type";
-import { BehaviorSubject, distinctUntilChanged, map, Observable } from "rxjs";
+import {Injectable} from '@angular/core';
+import {Apollo, gql, MutationResult} from "apollo-angular";
+import {ActorInput} from "../type/graphql-type";
+import {BehaviorSubject, distinctUntilChanged, Observable} from "rxjs";
 
 export interface IStepItems {
   name: string
@@ -31,6 +31,7 @@ export class ActorService {
   )
 
   private selectConnectorSource = new BehaviorSubject<string>('')
+
   // selectConnector$ = this.selectConnectorSource.asObservable()
 
   constructor(private apollo: Apollo) {
@@ -51,20 +52,6 @@ export class ActorService {
   toggleSelectConnector(value: string) {
     this.selectConnectorSource.next(value)
   }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
   /**
@@ -97,124 +84,6 @@ export class ActorService {
         id
       }
     })
-  }
-
-
-
-  queryActorById(id: string): QueryRef<{ actor: Actor }, { id: string }> {
-    return this.apollo.watchQuery({
-      query: gql`
-        query($id: ID!) {
-          actor(id: $id) {
-            id
-            name
-            connectorId
-            connectorConfig
-            connector {
-              id
-              name
-              image
-              version
-              specification{
-                changelogUrl
-                connectionSpecification
-                documentationUrl
-              }
-            }
-            catalog {
-              streams{
-                defaultCursorField
-                jsonSchema
-                name
-                namespace
-                sourceDefinedCursor
-                sourceDefinedPrimaryKey
-                supportedSyncModes
-              }
-            }
-          }
-        }
-      `,
-      variables: {
-        id
-      }
-    })
-  }
-
-
-  pagingQueryActors(first: number, skip: number): QueryRef<{ actors: ActorPage }, { first: number, skip: number }> {
-    return this.apollo.watchQuery({
-      query: gql`
-        query ($first: Int!, $skip: Long!) {
-          actors(first: $first, skip: $skip) {
-            total
-            items {
-              id
-              name
-              connectorId
-              connectorConfig
-              connector {
-                id
-                name
-                image
-                version
-                specification{
-                  changelogUrl
-                  connectionSpecification
-                  documentationUrl
-                }
-              }
-              catalog {
-                streams{
-                  defaultCursorField
-                  jsonSchema
-                  name
-                  namespace
-                  sourceDefinedCursor
-                  sourceDefinedPrimaryKey
-                  supportedSyncModes
-                }
-              }
-            }
-          }
-        }
-      `,
-      variables: {
-        first,
-        skip
-      }
-    })
-  }
-
-
-
-
-  actor(id: string): Observable<{ actor: Actor }> {
-    return this.apollo.query<{ actor: Actor }, { id: string }>({
-      query: gql`
-      query actor($id: ID!) {
-        actor(id: $id){
-          id
-          name
-          connectorId
-         catalog{
-         streams{
-              name
-              jsonSchema
-              supportedSyncModes
-              sourceDefinedCursor
-              defaultCursorField
-              sourceDefinedPrimaryKey
-              namespace
-            }
-          }
-        }
-      }
-     `,
-      variables: {
-        id: id,
-      }
-    }).pipe(map(r => r.data))
   }
 
 }

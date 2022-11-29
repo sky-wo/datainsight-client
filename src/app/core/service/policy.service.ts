@@ -1,6 +1,6 @@
 import {Injectable} from '@angular/core';
-import {Apollo, gql, MutationResult, QueryRef} from "apollo-angular";
-import {DataRuleInput, DataTag, DataTagInput, DataTagsPage} from "../type/graphql-type";
+import {Apollo, gql, MutationResult} from "apollo-angular";
+import {DataRuleInput, DataTagInput} from "../type/graphql-type";
 import {Observable} from "rxjs";
 
 @Injectable({
@@ -20,8 +20,7 @@ export class PolicyService {
         mutation ($dataTagInput: DataTagInput!) {
           addDataTag(dataTagInput: $dataTagInput)
         }
-      `,
-      variables: {
+      `, variables: {
         dataTagInput
       }
     })
@@ -36,10 +35,8 @@ export class PolicyService {
         mutation ($dataRuleInput: DataRuleInput!, $dataTagId: ID!) {
           addDataRule(dataRuleInput: $dataRuleInput , dataTagId: $dataTagId)
         }
-      `,
-      variables: {
-        dataRuleInput,
-        dataTagId
+      `, variables: {
+        dataRuleInput, dataTagId
       }
     })
   }
@@ -53,10 +50,8 @@ export class PolicyService {
         mutation ($dataTagId: ID!, $newParentId: ID) {
           moveDataTag(dataTagId: $dataTagId,newParentId: $newParentId)
         }
-      `,
-      variables: {
-        dataTagId,
-        newParentId
+      `, variables: {
+        dataTagId, newParentId
       }
     })
   }
@@ -70,74 +65,11 @@ export class PolicyService {
         mutation ($dataTagId: ID!, $dataRuleId: ID!, $newDataTagId: ID!) {
           moveDataRule(dataRuleId: $dataRuleId, dataTagId: $dataTagId, newDataTagId: $newDataTagId)
         }
-      `,
-      variables: {
-        dataTagId,
-        dataRuleId,
-        newDataTagId
+      `, variables: {
+        dataTagId, dataRuleId, newDataTagId
       }
     })
   }
-
-
-  queryDataTagById(id: string): QueryRef<{ dataTag: DataTag }, { id: string }> {
-    return this.apollo.watchQuery({
-      query: gql`
-        query($id: ID!) {
-          dataTag(id: $id) {
-            id
-            name
-            level
-            alert
-            parentId
-            rules(first: 100, skip: 0) {
-              items{
-                content
-                dataTagId
-                id
-              }
-              total
-            }
-          }
-        }
-      `,
-      variables: {
-        id
-      }
-    })
-  }
-
-  pagingQueryDataTags(first: number, skip: number): QueryRef<{ dataTags: DataTagsPage }, { first: number, skip: number }> {
-    return this.apollo.watchQuery({
-      query: gql`
-        query ($first: Int!, $skip: Long!) {
-          dataTags(first: $first, skip: $skip) {
-            total
-            items {
-              alert
-              id
-              level
-              name
-              parentId
-              rules(first: 100, skip: 0) {
-                items{
-                  content
-                  dataTagId
-                  id
-                }
-                total
-              }
-            }
-          }
-        }
-      `,
-      variables: {
-        first,
-        skip
-      }
-    })
-  }
-
 
 }
 

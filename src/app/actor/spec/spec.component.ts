@@ -5,6 +5,8 @@ import { FormNode } from '@skywo/jsonforms'
 import { NzMessageService } from 'ng-zorro-antd/message';
 import { ConnectorService } from "../../core/service/connector.service";
 import { ActorService } from "../../core/service/actor.service";
+import {Apollo, gql, QueryRef} from "apollo-angular";
+import {Connector} from "../../core/type/graphql-type";
 
 @Component({
   selector: 'app-spec',
@@ -24,14 +26,15 @@ export class SpecComponent implements OnInit {
     private router: Router,
     private actorService: ActorService,
     private connectorService: ConnectorService,
-    private message: NzMessageService
+    private message: NzMessageService,
+    private apollo: Apollo
   ) {
   }
 
   ngOnInit(): void {
     this.connectorId = this.actorService.getselectConnector
     if (this.connectorId) {
-      this.connectorService.queryConnectorById(this.connectorId).valueChanges.subscribe(
+      this.queryConnectorById(this.connectorId).valueChanges.subscribe(
         {
           next: r => {
             this.schema = r.data.connector.specification.connectionSpecification as JSONSchema7
@@ -68,7 +71,29 @@ export class SpecComponent implements OnInit {
         }
       )
     }
-
-
   }
+
+  queryConnectorById(id: string): QueryRef<{ connector: Connector }, { id: string }> {
+    return this.apollo.watchQuery({
+      query: gql`
+        query($id: ID!) {
+          connector(id: $id) {
+            id
+            name
+            image
+            version
+            specification {
+              documentationUrl
+              changelogUrl
+              connectionSpecification
+            }
+          }
+        }
+      `,
+      variables: {
+        id
+      }
+    })
+  }
+
 }

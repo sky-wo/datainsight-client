@@ -2,6 +2,7 @@ import {Component, OnInit} from '@angular/core';
 import {ActivatedRoute, Router} from '@angular/router';
 import {BehaviorSubject, switchMap, take} from 'rxjs';
 import {
+  Actor,
   ConfiguredDataInsightCatalogInput,
   ConfiguredDataInsightStreamInput,
   DataInsightDestinationSyncMode,
@@ -14,6 +15,7 @@ import {TaskService} from 'src/app/core/service/task.service';
 import {NzMessageService} from 'ng-zorro-antd/message';
 import {ActorService} from 'src/app/core/service/actor.service';
 import {CounterService} from 'src/app/core/service/counter.service';
+import {Apollo, gql, QueryRef} from "apollo-angular";
 
 interface ItemData {
   id: number;
@@ -53,7 +55,7 @@ export class SelectTableComponent implements OnInit {
   syncModeItems = [DataInsightSyncMode.FullRefresh, DataInsightSyncMode.Incremental]
 
 
-  constructor(private actorService: ActorService, private router: Router, private taskService: TaskService, private message: NzMessageService, private counterService: CounterService) {
+  constructor(private actorService: ActorService, private router: Router, private taskService: TaskService, private message: NzMessageService, private counterService: CounterService, private apollo: Apollo) {
   }
 
   get datasource() {
@@ -66,7 +68,8 @@ export class SelectTableComponent implements OnInit {
     this.taskService.actorIdSource.subscribe(actotId => {
       if (!!actotId) {
         const tableData: IDataInsightStream[] = []
-        this.actorService.queryActorById(actotId).valueChanges.subscribe(actor => {
+        this.queryActorById(actotId).valueChanges.subscribe(actor => {
+
           //统计数据源表数量
           this.dataSourceCount = {
             dataSourceName: actor.data.actor.name, tabelCount: actor.data.actor.catalog.streams.length
@@ -132,6 +135,31 @@ export class SelectTableComponent implements OnInit {
     // this.collectTableInfo()
   }
 
+  queryActorById(id: string): QueryRef<{ actor: Actor }, { id: string }> {
+    return this.apollo.watchQuery({
+      query: gql`
+        query($id: ID!) {
+          actor(id: $id) {
+            name
+            catalog {
+              streams{
+                defaultCursorField
+                jsonSchema
+                name
+                namespace
+                sourceDefinedCursor
+                sourceDefinedPrimaryKey
+                supportedSyncModes
+              }
+            }
+          }
+        }
+      `,
+      variables: {
+        id
+      }
+    })
+  }
 
   collectTableInfo() {
     const dataCount = this.counterService.getTableCount

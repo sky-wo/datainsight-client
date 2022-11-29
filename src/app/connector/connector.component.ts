@@ -1,9 +1,10 @@
 import {Component, OnInit} from '@angular/core';
 import {UntypedFormBuilder, UntypedFormGroup, Validators} from '@angular/forms';
 import {ConnectorService} from 'src/app/core/service/connector.service';
-import {Connector, ConnectorInput} from 'src/app/core/type/graphql-type';
+import {Connector, ConnectorInput, ConnectorPage} from 'src/app/core/type/graphql-type';
 import {NzMessageService} from 'ng-zorro-antd/message';
 import {NzNotificationService} from "ng-zorro-antd/notification";
+import {Apollo, gql, QueryRef} from "apollo-angular";
 
 @Component({
   selector: 'app-connector',
@@ -24,7 +25,8 @@ export class ConnectorComponent implements OnInit {
     private fb: UntypedFormBuilder,
     private connectorService: ConnectorService,
     private message: NzMessageService,
-    private notification: NzNotificationService
+    private notification: NzNotificationService,
+    private apollo: Apollo
   ) {
   }
 
@@ -34,11 +36,12 @@ export class ConnectorComponent implements OnInit {
       image: [null, [Validators.required]],
       version: [null, [Validators.required]],
     });
-    this.pagingQueryConnectors(this.pageSize, 0)
+    this.loadConnectors(this.pageSize, 0)
   }
 
-  pagingQueryConnectors(first: number, skip: number) {
-    this.connectorService.pagingQueryConnectors(first, skip).valueChanges.subscribe({
+
+  loadConnectors(first: number, skip: number) {
+    this.pagingQueryConnectors(first, skip).valueChanges.subscribe({
       next: r => {
         this.listOfData = r.data.connectors.items as Connector[]
         this.totalData = r.data.connectors.total
@@ -50,7 +53,7 @@ export class ConnectorComponent implements OnInit {
 
 
   pageChange() {
-    this.pagingQueryConnectors(this.pageSize, (this.currentPageIndex - 1) * this.pageSize)
+    this.loadConnectors(this.pageSize, (this.currentPageIndex - 1) * this.pageSize)
   }
 
 
@@ -74,7 +77,7 @@ export class ConnectorComponent implements OnInit {
         next: _ => {
           this.isOkLoading = false
           this.isVisible = false
-          this.connectorService.pagingQueryConnectors(this.pageSize, (this.currentPageIndex - 1) * this.pageSize).refetch()
+          this.pagingQueryConnectors(this.pageSize, (this.currentPageIndex - 1) * this.pageSize).refetch()
         }, error: e => {
           this.isOkLoading = false
           this.isVisible = false
@@ -100,7 +103,7 @@ export class ConnectorComponent implements OnInit {
           '删除成功',
           ''
         );
-        this.connectorService.pagingQueryConnectors(this.pageSize, (this.currentPageIndex - 1) * this.pageSize).refetch()
+        this.pagingQueryConnectors(this.pageSize, (this.currentPageIndex - 1) * this.pageSize).refetch()
       }, error: e => {
         this.notification.create(
           'error',
@@ -111,4 +114,34 @@ export class ConnectorComponent implements OnInit {
       }
     })
   }
+
+  pagingQueryConnectors(first: number, skip: number): QueryRef<{ connectors: ConnectorPage }, { first: number, skip: number }> {
+    return this.apollo.watchQuery({
+      query: gql`
+        query ($first: Int!, $skip: Long!) {
+          connectors(first: $first, skip: $skip) {
+            total
+            items {
+              id
+              name
+              image
+              version
+              specification {
+                documentationUrl
+                changelogUrl
+                connectionSpecification
+              }
+            }
+          }
+        }
+      `,
+      variables: {
+        first,
+        skip
+      }
+    })
+  }
+
+
+
 }

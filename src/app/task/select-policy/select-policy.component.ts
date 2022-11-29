@@ -1,10 +1,11 @@
 import {Component, OnInit, ViewChild} from '@angular/core';
 import {TaskService} from "../../core/service/task.service";
-import {DataTag} from "../../core/type/graphql-type";
+import {DataTag, DataTagsPage} from "../../core/type/graphql-type";
 import {PolicyService} from "../../core/service/policy.service";
 import {NzFormatEmitEvent} from "ng-zorro-antd/tree";
 import {NzMessageService} from "ng-zorro-antd/message";
 import {Router} from "@angular/router";
+import {Apollo, gql, QueryRef} from "apollo-angular";
 
 @Component({
   selector: 'app-select-policy',
@@ -21,7 +22,7 @@ export class SelectPolicyComponent implements OnInit {
   originalData: DataTag[] = []
   intermediateDataForConvertedToTree: any[] = []
 
-  constructor(private policyService: PolicyService, private router: Router, private taskService: TaskService, private message: NzMessageService) {
+  constructor(private policyService: PolicyService, private apollo: Apollo, private router: Router, private taskService: TaskService, private message: NzMessageService) {
   }
 
   ngOnInit(): void {
@@ -35,7 +36,7 @@ export class SelectPolicyComponent implements OnInit {
   }
 
   loadAllPolicys() {
-    this.policyService.pagingQueryDataTags(200, 0).valueChanges.subscribe({
+    this.pagingQueryDataTags(200, 0).valueChanges.subscribe({
       next: r => {
         this.originalData = r.data.dataTags.items as DataTag[]
         this.intermediateDataForConvertedToTree = this.originalData.map(item => {
@@ -101,5 +102,37 @@ export class SelectPolicyComponent implements OnInit {
       }
     })
   }
+
+  pagingQueryDataTags(first: number, skip: number): QueryRef<{ dataTags: DataTagsPage }, { first: number, skip: number }> {
+    return this.apollo.watchQuery({
+      query: gql`
+        query ($first: Int!, $skip: Long!) {
+          dataTags(first: $first, skip: $skip) {
+            total
+            items {
+              alert
+              id
+              level
+              name
+              parentId
+              rules(first: 100, skip: 0) {
+                items{
+                  content
+                  dataTagId
+                  id
+                }
+                total
+              }
+            }
+          }
+        }
+      `,
+      variables: {
+        first,
+        skip
+      }
+    })
+  }
+
 
 }

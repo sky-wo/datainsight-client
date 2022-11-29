@@ -1,9 +1,10 @@
 import {AfterViewInit, Component, OnInit, ViewChild} from '@angular/core';
 import {CdkDragDrop, moveItemInArray, transferArrayItem} from '@angular/cdk/drag-drop';
 import {NzFormatEmitEvent, NzTreeComponent} from "ng-zorro-antd/tree";
-import {DataTag} from "../core/type/graphql-type";
+import {DataTag, DataTagsPage} from "../core/type/graphql-type";
 import {PolicyService} from "../core/service/policy.service";
 import {NzNotificationService} from "ng-zorro-antd/notification";
+import {Apollo, gql, QueryRef} from "apollo-angular";
 
 @Component({
   selector: 'app-policy',
@@ -20,7 +21,7 @@ export class PolicyComponent implements OnInit, AfterViewInit {
   originalData: DataTag[] = []
   intermediateDataForConvertedToTree: any[] = []
 
-  constructor(private policyService: PolicyService, private notification: NzNotificationService) {
+  constructor(private policyService: PolicyService, private apollo: Apollo, private notification: NzNotificationService) {
   }
 
   ngOnInit(): void {
@@ -28,7 +29,7 @@ export class PolicyComponent implements OnInit, AfterViewInit {
   }
 
   loadAllPolicys() {
-    this.policyService.pagingQueryDataTags(200, 0).valueChanges.subscribe({
+    this.pagingQueryDataTags(200, 0).valueChanges.subscribe({
       next: r => {
         this.originalData = r.data.dataTags.items as DataTag[]
         this.intermediateDataForConvertedToTree = this.originalData.map(item => {
@@ -91,8 +92,37 @@ export class PolicyComponent implements OnInit, AfterViewInit {
   clickMe() {
     console.log(this.nzTreeComponent.getCheckedNodeList())
     console.log(this.readNodes(this.nzTreeComponent.getCheckedNodeList(), []))
+  }
 
-
+  pagingQueryDataTags(first: number, skip: number): QueryRef<{ dataTags: DataTagsPage }, { first: number, skip: number }> {
+    return this.apollo.watchQuery({
+      query: gql`
+        query ($first: Int!, $skip: Long!) {
+          dataTags(first: $first, skip: $skip) {
+            total
+            items {
+              alert
+              id
+              level
+              name
+              parentId
+              rules(first: 100, skip: 0) {
+                items{
+                  content
+                  dataTagId
+                  id
+                }
+                total
+              }
+            }
+          }
+        }
+      `,
+      variables: {
+        first,
+        skip
+      }
+    })
   }
 
 }
