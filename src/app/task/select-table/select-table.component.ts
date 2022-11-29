@@ -129,7 +129,7 @@ export class SelectTableComponent implements OnInit {
     this.taskService.toggleConfiguredCatalog({
       streams: streamInput
     })
-    this.taskService.addTaskInput$.pipe(take(1), switchMap((r) => this.taskService.addTask(r))).subscribe({
+    this.taskService.taskInput$.pipe(take(1), switchMap((r) => this.taskService.addTask(r))).subscribe({
       next: _ => {
         this.message.create("success", `任务创建成功`);
       }, error: e => {

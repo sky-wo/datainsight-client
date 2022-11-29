@@ -16,22 +16,23 @@ import {
 export class TaskService {
 
   private actorIdSource = new BehaviorSubject<string>('')
-  actorId$: Observable<string> = this.actorIdSource.asObservable().pipe(filter(r => r !== ""))
+  actorId$ = this.actorIdSource.asObservable().pipe(filter(r => r !== ""))
 
-  private inspectorConfigSource: BehaviorSubject<TaskInspectorConfig | undefined>
-    = new BehaviorSubject<TaskInspectorConfig | undefined>(undefined)
-  inspectorConfig$: Observable<TaskInspectorConfig | undefined>
-    = this.inspectorConfigSource.asObservable().pipe(filter(r => r !== undefined))
+  private inspectorConfigSource = new BehaviorSubject<TaskInspectorConfig | undefined>(undefined)
+  inspectorConfig$= this.inspectorConfigSource.asObservable().pipe(filter(r => r !== undefined))
 
-  private configuredCatalogSource: BehaviorSubject<ConfiguredDataInsightCatalogInput | undefined>
-    = new BehaviorSubject<ConfiguredDataInsightCatalogInput | undefined>(undefined)
-  configuredCatalog$: Observable<ConfiguredDataInsightCatalog | undefined>
-    = this.configuredCatalogSource.asObservable().pipe(filter(r => r !== undefined))
+  private configuredCatalogSource = new BehaviorSubject<ConfiguredDataInsightCatalogInput | undefined>(undefined)
+  configuredCatalog$ = this.configuredCatalogSource.asObservable().pipe(filter(r => r !== undefined))
 
-  private supervisorConfigSource: BehaviorSubject<string> = new BehaviorSubject<string>("")
-  supervisorConfig$: Observable<string> = this.supervisorConfigSource.asObservable()
+  private supervisorConfigSource = new BehaviorSubject<string>("")
+  supervisorConfig$ = this.supervisorConfigSource.asObservable()
 
-  addTaskInput$!: Observable<TaskInput>
+  taskInput$ = combineLatest([this.actorId$, this.configuredCatalog$, this.inspectorConfig$, this.supervisorConfig$]).pipe(map(([actorId, catalog, inspector, supervisor]) => {
+    const taskInput: TaskInput = {
+      actorId: actorId, configuredCatalog: catalog!, inspectorConfig: inspector!, supervisorConfig: supervisor
+    }
+    return taskInput
+  }))
 
   private currentStepSource = new BehaviorSubject<number>(0)
   currentStep$ = this.currentStepSource.asObservable().pipe(
@@ -39,12 +40,6 @@ export class TaskService {
   )
 
   constructor(private apollo: Apollo) {
-    this.addTaskInput$ = combineLatest([this.actorId$, this.configuredCatalog$, this.inspectorConfig$, this.supervisorConfig$]).pipe(map(([actorId, catalog, inspector, supervisor]) => {
-      const res: TaskInput = {
-        actorId: actorId, configuredCatalog: catalog!, inspectorConfig: inspector!, supervisorConfig: supervisor
-      }
-      return res
-    }))
   }
 
   prevStep(){
@@ -55,14 +50,9 @@ export class TaskService {
     this.currentStepSource.next(this.currentStepSource.value + 1)
   }
 
-  get getselectActor() {
-    return this.actorIdSource.value
-  }
-
   toggleSelectActor(value: string) {
     this.actorIdSource.next(value)
   }
-
 
   toggleConfiguredCatalog(config: ConfiguredDataInsightCatalog) {
     this.configuredCatalogSource.next(config)
@@ -75,6 +65,8 @@ export class TaskService {
   toggleSupervisorConfig(config: string) {
     this.supervisorConfigSource.next(config)
   }
+
+
 
   /**
    * @return  id
