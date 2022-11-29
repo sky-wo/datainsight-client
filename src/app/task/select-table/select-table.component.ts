@@ -66,27 +66,30 @@ export class SelectTableComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    this.taskService.actorId$.subscribe(actotId => {
-      const tableData: IDataInsightStream[] = []
-      this.actorService.queryActorById(actotId).valueChanges.subscribe(r => {
-        //统计数据源表数量
-        this.dataSourceCount = {
-          dataSourceName: r.data.actor.name, tabelCount: r.data.actor.catalog.streams.length
-        }
+    this.taskService.actorIdSource.subscribe(actotId => {
+      if(!!actotId){
+        console.log(actotId)
+        const tableData: IDataInsightStream[] = []
+        this.actorService.queryActorById(actotId).valueChanges.subscribe(r => {
+          //统计数据源表数量
+          this.dataSourceCount = {
+            dataSourceName: r.data.actor.name, tabelCount: r.data.actor.catalog.streams.length
+          }
 
-        r.data.actor.catalog.streams.forEach((r, index) => {
-          let properties: { [key: string]: JSONSchema7 }[] = []
-          Object.keys(r.jsonSchema.properties).forEach(res => {
-            const pro: { [key: string]: JSONSchema7 } = {}
-            pro[res] = r.jsonSchema.properties[res] as JSONSchema7
-            properties.push(pro)
+          r.data.actor.catalog.streams.forEach((r, index) => {
+            let properties: { [key: string]: JSONSchema7 }[] = []
+            Object.keys(r.jsonSchema.properties).forEach(res => {
+              const pro: { [key: string]: JSONSchema7 } = {}
+              pro[res] = r.jsonSchema.properties[res] as JSONSchema7
+              properties.push(pro)
+            })
+            tableData.push({
+              id: index, stream: r, properties: properties, syncMode: this.syncModeItems[0]
+            })
           })
-          tableData.push({
-            id: index, stream: r, properties: properties, syncMode: this.syncModeItems[0]
-          })
+          this.dataSource.next(tableData)
         })
-        this.dataSource.next(tableData)
-      })
+      }
 
     })
   }

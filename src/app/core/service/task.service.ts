@@ -15,39 +15,31 @@ import {
 })
 export class TaskService {
 
-  private actorIdSource = new BehaviorSubject<string>('')
-  actorId$ = this.actorIdSource.asObservable().pipe(filter(r => r !== ""))
+  currentStepSource = new BehaviorSubject<number>(0)
+  currentStep$ = this.currentStepSource.asObservable().pipe(
+    distinctUntilChanged((pre, next) => pre === next)
+  )
 
-  private inspectorConfigSource = new BehaviorSubject<TaskInspectorConfig | undefined>(undefined)
-  inspectorConfig$= this.inspectorConfigSource.asObservable().pipe(filter(r => r !== undefined))
+  actorIdSource = new BehaviorSubject<string>('')
+  configuredCatalogSource = new BehaviorSubject<ConfiguredDataInsightCatalogInput | undefined>(undefined)
+  inspectorConfigSource = new BehaviorSubject<TaskInspectorConfig | undefined>(undefined)
+  supervisorConfigSource = new BehaviorSubject<string>("")
 
-  private configuredCatalogSource = new BehaviorSubject<ConfiguredDataInsightCatalogInput | undefined>(undefined)
-  configuredCatalog$ = this.configuredCatalogSource.asObservable().pipe(filter(r => r !== undefined))
-
-  private supervisorConfigSource = new BehaviorSubject<string>("")
-  supervisorConfig$ = this.supervisorConfigSource.asObservable()
-
-  taskInput$ = combineLatest([this.actorId$, this.configuredCatalog$, this.inspectorConfig$, this.supervisorConfig$]).pipe(map(([actorId, catalog, inspector, supervisor]) => {
+  taskInput$ = combineLatest(
+    [
+      this.actorIdSource.asObservable().pipe(filter(r => !!r)),
+      this.configuredCatalogSource.asObservable().pipe(filter(r => !!r)),
+      this.inspectorConfigSource.asObservable().pipe(filter(r => !!r)),
+      this.supervisorConfigSource.asObservable()
+    ]
+  ).pipe(map(([actorId, catalog, inspector, supervisor]) => {
     const taskInput: TaskInput = {
       actorId: actorId, configuredCatalog: catalog!, inspectorConfig: inspector!, supervisorConfig: supervisor
     }
     return taskInput
   }))
 
-  private currentStepSource = new BehaviorSubject<number>(0)
-  currentStep$ = this.currentStepSource.asObservable().pipe(
-    distinctUntilChanged((pre, next) => pre === next)
-  )
-
   constructor(private apollo: Apollo) {
-  }
-
-  prevStep(){
-    this.currentStepSource.next(this.currentStepSource.value - 1)
-  }
-
-  nextStep(){
-    this.currentStepSource.next(this.currentStepSource.value + 1)
   }
 
   toggleSelectActor(value: string) {
@@ -66,6 +58,13 @@ export class TaskService {
     this.supervisorConfigSource.next(config)
   }
 
+  prevStep() {
+    this.currentStepSource.next(this.currentStepSource.value - 1)
+  }
+
+  nextStep() {
+    this.currentStepSource.next(this.currentStepSource.value + 1)
+  }
 
 
   /**
