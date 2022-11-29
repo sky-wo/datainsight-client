@@ -15,28 +15,28 @@ import {
 })
 export class TaskService {
 
-  addTaskInput$!: Observable<TaskInput>;
+  private actorIdSource = new BehaviorSubject<string>('')
+  actorId$: Observable<string> = this.actorIdSource.asObservable().pipe(filter(r => r !== ""))
+
+  private inspectorConfigSource: BehaviorSubject<TaskInspectorConfig | undefined>
+    = new BehaviorSubject<TaskInspectorConfig | undefined>(undefined)
+  inspectorConfig$: Observable<TaskInspectorConfig | undefined>
+    = this.inspectorConfigSource.asObservable().pipe(filter(r => r !== undefined))
+
+  private configuredCatalogSource: BehaviorSubject<ConfiguredDataInsightCatalogInput | undefined>
+    = new BehaviorSubject<ConfiguredDataInsightCatalogInput | undefined>(undefined)
+  configuredCatalog$: Observable<ConfiguredDataInsightCatalog | undefined>
+    = this.configuredCatalogSource.asObservable().pipe(filter(r => r !== undefined))
+
+  private supervisorConfigSource: BehaviorSubject<string> = new BehaviorSubject<string>("")
+  supervisorConfig$: Observable<string> = this.supervisorConfigSource.asObservable()
+
+  addTaskInput$!: Observable<TaskInput>
+
   private currentStepSource = new BehaviorSubject<number>(0)
   currentStep$ = this.currentStepSource.asObservable().pipe(
     distinctUntilChanged((pre, next) => pre === next)
   )
-  // selectConnector$ = this.selectConnectorSource.asObservable()
-
-
-  private selectActorSource = new BehaviorSubject<string>('')
-  private actorIdSource: BehaviorSubject<string> = new BehaviorSubject<string>("")
-
-  actorId$: Observable<string> = this.actorIdSource.asObservable().pipe(filter(r => r !== ""))
-  private configuredCatalogSource: BehaviorSubject<ConfiguredDataInsightCatalogInput | undefined> = new BehaviorSubject<ConfiguredDataInsightCatalogInput | undefined>(undefined)
-
-  configuredCatalog$: Observable<ConfiguredDataInsightCatalog | undefined> = this.configuredCatalogSource.asObservable().pipe(filter(r => r !== undefined))
-  private inspectorConfigSource: BehaviorSubject<TaskInspectorConfig | undefined> = new BehaviorSubject<TaskInspectorConfig | undefined>(undefined)
-
-  inspectorConfig$: Observable<TaskInspectorConfig | undefined> = this.inspectorConfigSource.asObservable().pipe(filter(r => r !== undefined))
-  private supervisorConfigSource: BehaviorSubject<string> = new BehaviorSubject<string>("")
-
-  supervisorConfig$: Observable<string> = this.supervisorConfigSource.asObservable()
-
 
   constructor(private apollo: Apollo) {
     this.addTaskInput$ = combineLatest([this.actorId$, this.configuredCatalog$, this.inspectorConfig$, this.supervisorConfig$]).pipe(map(([actorId, catalog, inspector, supervisor]) => {
@@ -56,16 +56,13 @@ export class TaskService {
   }
 
   get getselectActor() {
-    return this.selectActorSource.value
+    return this.actorIdSource.value
   }
 
   toggleSelectActor(value: string) {
-    this.selectActorSource.next(value)
+    this.actorIdSource.next(value)
   }
 
-  toggleActorId(id: string) {
-    this.actorIdSource.next(id)
-  }
 
   toggleConfiguredCatalog(config: ConfiguredDataInsightCatalog) {
     this.configuredCatalogSource.next(config)

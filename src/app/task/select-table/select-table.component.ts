@@ -1,12 +1,19 @@
-import { Component, OnInit } from '@angular/core';
-import { ActivatedRoute, Router } from '@angular/router';
-import { BehaviorSubject, switchMap, take } from 'rxjs';
-import { ConfiguredDataInsightCatalogInput, ConfiguredDataInsightStreamInput, DataInsightDestinationSyncMode, DataInsightStream, DataInsightStreamInput, DataInsightSyncMode } from 'src/app/core/type/graphql-type';
-import { JSONSchema7 } from 'json-schema';
-import { TaskService } from 'src/app/core/service/task.service';
-import { NzMessageService } from 'ng-zorro-antd/message';
-import { ActorService } from 'src/app/core/service/actor.service';
-import { CounterService } from 'src/app/core/service/counter.service';
+import {Component, OnInit} from '@angular/core';
+import {ActivatedRoute, Router} from '@angular/router';
+import {BehaviorSubject, switchMap, take} from 'rxjs';
+import {
+  ConfiguredDataInsightCatalogInput,
+  ConfiguredDataInsightStreamInput,
+  DataInsightDestinationSyncMode,
+  DataInsightStream,
+  DataInsightStreamInput,
+  DataInsightSyncMode
+} from 'src/app/core/type/graphql-type';
+import {JSONSchema7} from 'json-schema';
+import {TaskService} from 'src/app/core/service/task.service';
+import {NzMessageService} from 'ng-zorro-antd/message';
+import {ActorService} from 'src/app/core/service/actor.service';
+import {CounterService} from 'src/app/core/service/counter.service';
 
 interface ItemData {
   id: number;
@@ -22,6 +29,7 @@ interface IDataInsightStream {
   sourceDefinedCursor?: string
   syncMode: DataInsightSyncMode
 }
+
 interface ITableCount {
   dataSourceName: string,
   tabelCount: number
@@ -49,24 +57,21 @@ export class SelectTableComponent implements OnInit {
   selectModal = 0
 
   dataSourceCount!: ITableCount;
-  constructor(
-    private actorService: ActorService,
-    private router: Router,
-    private taskService: TaskService,
-    private message: NzMessageService,
-    private counterService: CounterService
-  ) { }
+
+  constructor(private actorService: ActorService, private router: Router, private taskService: TaskService, private message: NzMessageService, private counterService: CounterService) {
+  }
+
+  get datasource() {
+    return this.dataSource.value
+  }
 
   ngOnInit(): void {
-    // const actorId = this.activateRoute.snapshot.paramMap.get("actorId")
-    const actorId = this.taskService.getselectActor
-    const tableData: IDataInsightStream[] = []
-    if (actorId) {
-      this.actorService.queryActorById(actorId).valueChanges.subscribe(r => {
+    this.taskService.actorId$.subscribe(actotId => {
+      const tableData: IDataInsightStream[] = []
+      this.actorService.queryActorById(actotId).valueChanges.subscribe(r => {
         //统计数据源表数量
         this.dataSourceCount = {
-          dataSourceName: r.data.actor.name,
-          tabelCount: r.data.actor.catalog.streams.length
+          dataSourceName: r.data.actor.name, tabelCount: r.data.actor.catalog.streams.length
         }
 
         r.data.actor.catalog.streams.forEach((r, index) => {
@@ -77,25 +82,17 @@ export class SelectTableComponent implements OnInit {
             properties.push(pro)
           })
           tableData.push({
-            id: index,
-            stream: r,
-            properties: properties,
-            syncMode: this.syncModeItems[0]
+            id: index, stream: r, properties: properties, syncMode: this.syncModeItems[0]
           })
         })
         this.dataSource.next(tableData)
       })
-      this.taskService.toggleActorId(actorId)
-    }
 
-    // this.counterService.tableCount$.subscribe(r => console.log(r))
-  }
-  get datasource() {
-    return this.dataSource.value
+    })
   }
 
   tableLoading(): boolean {
-    return this.dataSource.value.length > 0 ? false : true
+    return this.dataSource.value.length <= 0
   }
 
   onItemChecked(id: number, checked: boolean): void {
@@ -114,22 +111,20 @@ export class SelectTableComponent implements OnInit {
       if (this.datasource[r].sourceDefinedCursor) {
         cursorField.push(this.datasource[r].sourceDefinedCursor!)
       }
-      streamInput.push(
-        {
-          stream: {
-            name: this.datasource[r].stream.name,
-            jsonSchema: this.datasource[r].stream.jsonSchema,
-            defaultCursorField: this.datasource[r].stream.defaultCursorField,
-            namespace: this.datasource[r].stream.namespace,
-            sourceDefinedCursor: this.datasource[r].stream.sourceDefinedCursor,
-            supportedSyncModes: this.datasource[r].stream.supportedSyncModes
-          },
-          destinationSyncMode: DataInsightDestinationSyncMode.Append,
-          syncMode: this.datasource[r].syncMode,
-          primaryKey: this.datasource[r].stream.sourceDefinedPrimaryKey,
-          cursorField: cursorField
-        }
-      )
+      streamInput.push({
+        stream: {
+          name: this.datasource[r].stream.name,
+          jsonSchema: this.datasource[r].stream.jsonSchema,
+          defaultCursorField: this.datasource[r].stream.defaultCursorField,
+          namespace: this.datasource[r].stream.namespace,
+          sourceDefinedCursor: this.datasource[r].stream.sourceDefinedCursor,
+          supportedSyncModes: this.datasource[r].stream.supportedSyncModes
+        },
+        destinationSyncMode: DataInsightDestinationSyncMode.Append,
+        syncMode: this.datasource[r].syncMode,
+        primaryKey: this.datasource[r].stream.sourceDefinedPrimaryKey,
+        cursorField: cursorField
+      })
     })
     this.taskService.toggleConfiguredCatalog({
       streams: streamInput
@@ -137,8 +132,7 @@ export class SelectTableComponent implements OnInit {
     this.taskService.addTaskInput$.pipe(take(1), switchMap((r) => this.taskService.addTask(r))).subscribe({
       next: _ => {
         this.message.create("success", `任务创建成功`);
-      },
-      error: e => {
+      }, error: e => {
         console.error(e)
       }
     })
