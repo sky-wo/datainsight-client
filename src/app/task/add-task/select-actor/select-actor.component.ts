@@ -2,6 +2,7 @@ import {Component, OnInit} from '@angular/core';
 import {TaskService} from 'src/app/core/service/task.service';
 import {Actor, ActorPage} from 'src/app/core/type/graphql-type';
 import {Apollo, gql, QueryRef} from "apollo-angular";
+import {CreateTaskCommunicationService} from "../create-task-communication.service";
 
 @Component({
   selector: 'app-select-actor',
@@ -14,7 +15,7 @@ export class SelectActorComponent implements OnInit {
 
   currentActorId: string | undefined
 
-  constructor(private taskService: TaskService, private apollo: Apollo) {
+  constructor(private createTaskCommunicationService: CreateTaskCommunicationService, private apollo: Apollo) {
   }
 
   ngOnInit(): void {
@@ -50,8 +51,8 @@ export class SelectActorComponent implements OnInit {
   }
 
   nextStep() {
-    this.taskService.toggleActorId(this.currentActorId!)
-    this.taskService.nextStep()
+    this.createTaskCommunicationService.announceActorId(this.currentActorId!)
+    this.createTaskCommunicationService.nextStep()
   }
 
 }

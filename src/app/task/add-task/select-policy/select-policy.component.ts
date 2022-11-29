@@ -1,11 +1,12 @@
 import {Component, OnInit, ViewChild} from '@angular/core';
-import {TaskService} from "../../core/service/task.service";
-import {DataTag, DataTagsPage} from "../../core/type/graphql-type";
-import {PolicyService} from "../../core/service/policy.service";
+import {TaskService} from "../../../core/service/task.service";
+import {DataTag, DataTagsPage} from "../../../core/type/graphql-type";
+import {PolicyService} from "../../../core/service/policy.service";
 import {NzFormatEmitEvent} from "ng-zorro-antd/tree";
 import {NzMessageService} from "ng-zorro-antd/message";
 import {Router} from "@angular/router";
 import {Apollo, gql, QueryRef} from "apollo-angular";
+import {CreateTaskCommunicationService} from "../create-task-communication.service";
 
 @Component({
   selector: 'app-select-policy',
@@ -22,7 +23,7 @@ export class SelectPolicyComponent implements OnInit {
   originalData: DataTag[] = []
   intermediateDataForConvertedToTree: any[] = []
 
-  constructor(private policyService: PolicyService, private apollo: Apollo, private router: Router, private taskService: TaskService, private message: NzMessageService) {
+  constructor(private policyService: PolicyService, private apollo: Apollo, private router: Router, private createTaskCommunicationService: CreateTaskCommunicationService, private message: NzMessageService) {
   }
 
   ngOnInit(): void {
@@ -86,14 +87,14 @@ export class SelectPolicyComponent implements OnInit {
   }
 
   prevStep() {
-    this.taskService.prevStep()
+    this.createTaskCommunicationService.prevStep()
   }
 
   nextStep() {
     let inspectorConfig = {enabledDataTagIds: this.flatTree(this.nzTreeComponent.getCheckedNodeList(), [])}
-    this.taskService.toggleInspectorConfig(inspectorConfig)
+    this.createTaskCommunicationService.announceInspectorConfig(inspectorConfig)
 
-    this.taskService.createTaskByStep().subscribe({
+    this.createTaskCommunicationService.createTaskByStep().subscribe({
       next: _ => {
         this.message.create("success", `任务创建成功`);
         this.router.navigate(['/frame/task/'])

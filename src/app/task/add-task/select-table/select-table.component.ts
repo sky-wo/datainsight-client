@@ -1,21 +1,19 @@
 import {Component, OnInit} from '@angular/core';
-import {ActivatedRoute, Router} from '@angular/router';
-import {BehaviorSubject, switchMap, take} from 'rxjs';
+import {Router} from '@angular/router';
+import {BehaviorSubject} from 'rxjs';
 import {
   Actor,
-  ConfiguredDataInsightCatalogInput,
   ConfiguredDataInsightStreamInput,
   DataInsightDestinationSyncMode,
   DataInsightStream,
-  DataInsightStreamInput,
   DataInsightSyncMode
 } from 'src/app/core/type/graphql-type';
 import {JSONSchema7} from 'json-schema';
-import {TaskService} from 'src/app/core/service/task.service';
 import {NzMessageService} from 'ng-zorro-antd/message';
 import {ActorService} from 'src/app/core/service/actor.service';
 import {CounterService} from 'src/app/core/service/counter.service';
 import {Apollo, gql, QueryRef} from "apollo-angular";
+import {CreateTaskCommunicationService} from "../create-task-communication.service";
 
 interface ItemData {
   id: number;
@@ -55,7 +53,7 @@ export class SelectTableComponent implements OnInit {
   syncModeItems = [DataInsightSyncMode.FullRefresh, DataInsightSyncMode.Incremental]
 
 
-  constructor(private actorService: ActorService, private router: Router, private taskService: TaskService, private message: NzMessageService, private counterService: CounterService, private apollo: Apollo) {
+  constructor(private actorService: ActorService, private router: Router, private createTaskCommunicationService: CreateTaskCommunicationService, private message: NzMessageService, private counterService: CounterService, private apollo: Apollo) {
   }
 
   get datasource() {
@@ -63,9 +61,8 @@ export class SelectTableComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    // TODO: actotId
 
-    this.taskService.actorIdSource.subscribe(actotId => {
+    this.createTaskCommunicationService.actorIdSource.subscribe(actotId => {
       if (!!actotId) {
         const tableData: IDataInsightStream[] = []
         this.queryActorById(actotId).valueChanges.subscribe(actor => {
@@ -94,7 +91,7 @@ export class SelectTableComponent implements OnInit {
   }
 
   prevStep() {
-    this.taskService.prevStep()
+    this.createTaskCommunicationService.prevStep()
   }
 
   nextSetp() {
@@ -125,11 +122,11 @@ export class SelectTableComponent implements OnInit {
       })
     })
 
-    this.taskService.toggleConfiguredCatalog({
+    this.createTaskCommunicationService.announceConfiguredCatalog({
       streams: configuredDataInsightStreamInputs
     })
 
-    this.taskService.nextStep()
+    this.createTaskCommunicationService.nextStep()
 
     // TODO:考虑后台返回
     // this.collectTableInfo()
