@@ -1,0 +1,32 @@
+<nz-tree
+  #nzTreeComponent
+  (nzCheckBoxChange)="nzEvent($event)"
+  (nzClick)="nzEvent($event)"
+  (nzExpandChange)="nzEvent($event)"
+  [nzCheckedKeys]="defaultCheckedKeys"
+  [nzData]="nodesForView"
+  [nzExpandedKeys]="defaultExpandedKeys"
+  nzCheckable
+  nzMultiple
+></nz-tree>
+
+<div *ngIf="!!currentlySelectedNode">
+  <nz-card [nzExtra]="extraTemplate" nzTitle="{{currentlySelectedNode.name}} 详情" style="width: 200px">
+    <div *ngIf="currentlySelectedNode.rules.items.length>0">
+      <div *ngFor="let item of currentlySelectedNode.rules.items">
+        <div>
+          Id：{{item.id}}
+        </div>
+        <div>
+          context：{{item.content}}
+        </div>
+      </div>
+    </div>
+  </nz-card>
+  <ng-template #extraTemplate>
+    <a>More</a>
+  </ng-template>
+</div>
+
+
+<button (click)="clickMe()" nz-button nzType="primary"> 移动标签</button>

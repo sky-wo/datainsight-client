@@ -1,15 +1,1 @@
-<nz-tree
-  #nzTreeComponent
-  (nzCheckBoxChange)="nzEvent($event)"
-  (nzClick)="nzEvent($event)"
-  (nzExpandChange)="nzEvent($event)"
-  [nzCheckedKeys]="defaultCheckedKeys"
-  [nzData]="nodes"
-  [nzExpandedKeys]="defaultExpandedKeys"
-  [nzSelectedKeys]="defaultSelectedKeys"
-  nzCheckable
-  nzMultiple
-></nz-tree>
-
-<button (click)="clickMe()" nz-button nzType="primary"  > Primary Button </button>
-
+<app-policy-tree></app-policy-tree>

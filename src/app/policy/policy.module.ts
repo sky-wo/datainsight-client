@@ -5,10 +5,12 @@ import {PolicyRoutingModule} from './policy-routing.module';
 import {PolicyComponent} from './policy.component';
 import {SharedModule} from "../shared/shared.module";
 import {DragDropModule} from '@angular/cdk/drag-drop';
+import { PolicyTreeComponent } from './policy-tree/policy-tree.component';
 
 @NgModule({
   declarations: [
-    PolicyComponent
+    PolicyComponent,
+    PolicyTreeComponent
   ],
   imports: [
     CommonModule,
