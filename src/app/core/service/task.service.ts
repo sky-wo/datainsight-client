@@ -20,7 +20,7 @@ export class TaskService {
     distinctUntilChanged((pre, next) => pre === next)
   )
 
-  actorIdSource = new BehaviorSubject<string>('')
+  actorIdSource = new BehaviorSubject<string>("")
   configuredCatalogSource = new BehaviorSubject<ConfiguredDataInsightCatalogInput | undefined>(undefined)
   inspectorConfigSource = new BehaviorSubject<TaskInspectorConfig | undefined>(undefined)
   supervisorConfigSource = new BehaviorSubject<string>("")
@@ -30,7 +30,7 @@ export class TaskService {
       this.actorIdSource.asObservable().pipe(filter(r => !!r)),
       this.configuredCatalogSource.asObservable().pipe(filter(r => !!r)),
       this.inspectorConfigSource.asObservable().pipe(filter(r => !!r)),
-      this.supervisorConfigSource.asObservable()
+      this.supervisorConfigSource.asObservable().pipe(filter(r => !!r))
     ]
   ).pipe(map(([actorId, catalog, inspector, supervisor]) => {
     const taskInput: TaskInput = {

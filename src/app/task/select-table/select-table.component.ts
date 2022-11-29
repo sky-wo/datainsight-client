@@ -67,8 +67,7 @@ export class SelectTableComponent implements OnInit {
 
   ngOnInit(): void {
     this.taskService.actorIdSource.subscribe(actotId => {
-      if(!!actotId){
-        console.log(actotId)
+      if (!!actotId) {
         const tableData: IDataInsightStream[] = []
         this.actorService.queryActorById(actotId).valueChanges.subscribe(r => {
           //统计数据源表数量
@@ -132,6 +131,10 @@ export class SelectTableComponent implements OnInit {
     this.taskService.toggleConfiguredCatalog({
       streams: streamInput
     })
+
+    // TODO : 管理配置
+    this.taskService.toggleSupervisorConfig("666")
+
     this.taskService.taskInput$.pipe(take(1), switchMap((r) => this.taskService.addTask(r))).subscribe({
       next: _ => {
         this.message.create("success", `任务创建成功`);
@@ -140,12 +143,12 @@ export class SelectTableComponent implements OnInit {
       }
     })
 
-    this.countTables()
+    this.collectTableInfo()
     this.router.navigate(['/frame/task/'])
   }
 
-  //统计表信息
-  countTables() {
+
+  collectTableInfo() {
     const dataCount = this.counterService.getTableCount
     if (dataCount.has(this.dataSourceCount.dataSourceName) && dataCount.get(this.dataSourceCount.dataSourceName)) {
       const newCount = dataCount.get(this.dataSourceCount.dataSourceName)! + this.dataSourceCount.tabelCount
