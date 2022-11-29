@@ -50,7 +50,7 @@ export class SelectActorComponent implements OnInit {
   }
 
   nextStep() {
-    this.taskService.toggleSelectActor(this.currentActorId!)
+    this.taskService.toggleActorId(this.currentActorId!)
     this.taskService.nextStep()
   }
 

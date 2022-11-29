@@ -42,7 +42,7 @@ export class TaskService {
   constructor(private apollo: Apollo) {
   }
 
-  toggleSelectActor(value: string) {
+  toggleActorId(value: string) {
     this.actorIdSource.next(value)
   }
 

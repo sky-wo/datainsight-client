@@ -1,7 +1,7 @@
 <nz-table #rowSelectionTable nzShowSizeChanger [nzData]="datasource" [nzLoading]="tableLoading()">
     <thead>
         <tr>
-            <th [(nzChecked)]="checked" [nzIndeterminate]="indeterminate" (nzCheckedChange)="onAllChecked($event)"></th>
+            <th [(nzChecked)]="allCheckBoxTicked" [nzIndeterminate]="allCheckBoxIndeterminate" (nzCheckedChange)="onAllChecked($event)"></th>
             <th>表名</th>
             <th>namespace</th>
             <th>sourceDefinedCursor</th>
@@ -12,7 +12,7 @@
     </thead>
     <tbody>
         <tr *ngFor="let data of rowSelectionTable.data;let index=index">
-            <td [nzChecked]="selectIds.has(data.id)" (nzCheckedChange)="onItemChecked(data.id, $event)"></td>
+            <td [nzChecked]="streamIdSelected.has(data.id)" (nzCheckedChange)="onItemChecked(data.id, $event)"></td>
             <td>{{ data.stream.name }}</td>
             <td>{{ data.stream.namespace }}</td>
             <!-- todo 此处根据选取值动态显示 -->
@@ -34,9 +34,9 @@
     </tbody>
 </nz-table>
 
-<nz-modal [(nzVisible)]="isVisible" nzTitle="The first Modal" (nzOnCancel)="handleCancel()" (nzOnOk)="handleOk()">
+<nz-modal [(nzVisible)]="dataSourceDetailsModalIsVisible" nzTitle="数据源详情" (nzOnCancel)="handleCancel()" (nzOnOk)="handleOk()">
     <ng-container *nzModalContent>
-        <nz-table #basicTable [nzData]="datasource[selectModal].properties">
+        <nz-table #basicTable [nzData]="datasource[dataSourceDetailsModalPointsTo].properties">
             <thead>
                 <tr>
                     <th>名称</th>

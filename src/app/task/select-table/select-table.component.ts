@@ -42,21 +42,16 @@ interface ITableCount {
 })
 export class SelectTableComponent implements OnInit {
 
-  checked = false;
+  allCheckBoxTicked = false
+  allCheckBoxIndeterminate = false
+  dataSourceDetailsModalIsVisible = false
+  dataSourceDetailsModalPointsTo = 0
 
-  indeterminate = false;
-
-  isVisible = false
-
-  selectIds = new Set<number>();
-
+  dataSourceCount!: ITableCount
+  streamIdSelected = new Set<number>()
+  dataSource = new BehaviorSubject<IDataInsightStream[]>([])
   syncModeItems = [DataInsightSyncMode.FullRefresh, DataInsightSyncMode.Incremental]
 
-  dataSource = new BehaviorSubject<IDataInsightStream[]>([])
-
-  selectModal = 0
-
-  dataSourceCount!: ITableCount;
 
   constructor(private actorService: ActorService, private router: Router, private taskService: TaskService, private message: NzMessageService, private counterService: CounterService) {
   }
@@ -66,24 +61,26 @@ export class SelectTableComponent implements OnInit {
   }
 
   ngOnInit(): void {
+    // TODO: actotId
+
     this.taskService.actorIdSource.subscribe(actotId => {
       if (!!actotId) {
         const tableData: IDataInsightStream[] = []
-        this.actorService.queryActorById(actotId).valueChanges.subscribe(r => {
+        this.actorService.queryActorById(actotId).valueChanges.subscribe(actor => {
           //统计数据源表数量
           this.dataSourceCount = {
-            dataSourceName: r.data.actor.name, tabelCount: r.data.actor.catalog.streams.length
+            dataSourceName: actor.data.actor.name, tabelCount: actor.data.actor.catalog.streams.length
           }
 
-          r.data.actor.catalog.streams.forEach((r, index) => {
+          actor.data.actor.catalog.streams.forEach((dataInsightStream, index) => {
             let properties: { [key: string]: JSONSchema7 }[] = []
-            Object.keys(r.jsonSchema.properties).forEach(res => {
+            Object.keys(dataInsightStream.jsonSchema.properties).forEach(res => {
               const pro: { [key: string]: JSONSchema7 } = {}
-              pro[res] = r.jsonSchema.properties[res] as JSONSchema7
+              pro[res] = dataInsightStream.jsonSchema.properties[res] as JSONSchema7
               properties.push(pro)
             })
             tableData.push({
-              id: index, stream: r, properties: properties, syncMode: this.syncModeItems[0]
+              id: index, stream: dataInsightStream, properties: properties, syncMode: this.syncModeItems[0]
             })
           })
           this.dataSource.next(tableData)
@@ -93,43 +90,40 @@ export class SelectTableComponent implements OnInit {
     })
   }
 
-  tableLoading(): boolean {
-    return this.dataSource.value.length <= 0
-  }
-
-  onItemChecked(id: number, checked: boolean): void {
-    this.updateCheckedSet(id, checked)
-    this.refreshCheckedStatus()
-  }
-
   prevStep() {
     this.taskService.prevStep()
   }
 
   finish() {
-    const streamInput: ConfiguredDataInsightStreamInput[] = []
-    Array.from(this.selectIds).forEach(r => {
-      const cursorField: string[] = []
-      if (this.datasource[r].sourceDefinedCursor) {
-        cursorField.push(this.datasource[r].sourceDefinedCursor!)
+    const configuredDataInsightStreamInputs: ConfiguredDataInsightStreamInput[] = []
+
+    Array.from(this.streamIdSelected).forEach(streamId => {
+      let  iDataInsightStream = this.datasource[streamId]
+
+      const cursorField = []
+      if (iDataInsightStream.sourceDefinedCursor) {
+        cursorField.push(iDataInsightStream.sourceDefinedCursor!)
       }
-      streamInput.push({
-        stream: {
-          name: this.datasource[r].stream.name,
-          jsonSchema: this.datasource[r].stream.jsonSchema,
-          defaultCursorField: this.datasource[r].stream.defaultCursorField,
-          namespace: this.datasource[r].stream.namespace,
-          sourceDefinedCursor: this.datasource[r].stream.sourceDefinedCursor,
-          supportedSyncModes: this.datasource[r].stream.supportedSyncModes
-        },
+
+      // TODO: DataInsightDestinationSyncMode
+      configuredDataInsightStreamInputs.push({
+        cursorField: cursorField,
         destinationSyncMode: DataInsightDestinationSyncMode.Append,
-        syncMode: this.datasource[r].syncMode,
-        primaryKey: this.datasource[r].stream.sourceDefinedPrimaryKey,
-        cursorField: cursorField
+        primaryKey: iDataInsightStream.stream.sourceDefinedPrimaryKey,
+        stream: {
+          name: iDataInsightStream.stream.name,
+          jsonSchema: iDataInsightStream.stream.jsonSchema,
+          defaultCursorField: iDataInsightStream.stream.defaultCursorField,
+          namespace: iDataInsightStream.stream.namespace,
+          sourceDefinedCursor: iDataInsightStream.stream.sourceDefinedCursor,
+          supportedSyncModes: iDataInsightStream.stream.supportedSyncModes
+        },
+        syncMode: iDataInsightStream.syncMode
       })
     })
+
     this.taskService.toggleConfiguredCatalog({
-      streams: streamInput
+      streams: configuredDataInsightStreamInputs
     })
 
     // TODO : 管理配置
@@ -173,34 +167,44 @@ export class SelectTableComponent implements OnInit {
     this.dataSource.next(newDataSource)
   }
 
+
+  showModal(index: number): void {
+    this.dataSourceDetailsModalPointsTo = index
+    this.dataSourceDetailsModalIsVisible = true;
+  }
+
+  handleOk(): void {
+    this.dataSourceDetailsModalIsVisible = false;
+  }
+
+  handleCancel(): void {
+    this.dataSourceDetailsModalIsVisible = false;
+  }
+
+  tableLoading(): boolean {
+    return this.dataSource.value.length <= 0
+  }
+
+  onItemChecked(id: number, checked: boolean): void {
+    this.updateCheckedSet(id, checked)
+    this.refreshCheckedStatus()
+  }
+
   onAllChecked(value: boolean): void {
     this.datasource.forEach(item => this.updateCheckedSet(item.id, value));
     this.refreshCheckedStatus();
   }
 
   refreshCheckedStatus(): void {
-    this.checked = this.datasource.every(item => this.selectIds.has(item.id));
-    this.indeterminate = this.datasource.some(item => this.selectIds.has(item.id)) && !this.checked;
+    this.allCheckBoxTicked = this.datasource.every(item => this.streamIdSelected.has(item.id));
+    this.allCheckBoxIndeterminate = this.datasource.some(item => this.streamIdSelected.has(item.id)) && !this.allCheckBoxTicked;
   }
 
   updateCheckedSet(id: number, checked: boolean): void {
     if (checked) {
-      this.selectIds.add(id);
+      this.streamIdSelected.add(id);
     } else {
-      this.selectIds.delete(id);
+      this.streamIdSelected.delete(id);
     }
-  }
-
-  showModal(index: number): void {
-    this.selectModal = index
-    this.isVisible = true;
-  }
-
-  handleOk(): void {
-    this.isVisible = false;
-  }
-
-  handleCancel(): void {
-    this.isVisible = false;
   }
 }
