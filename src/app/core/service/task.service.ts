@@ -1,6 +1,6 @@
 import {Injectable} from '@angular/core';
 import {Apollo, gql, MutationResult, QueryRef} from "apollo-angular";
-import {BehaviorSubject, combineLatest, distinctUntilChanged, filter, map, Observable} from 'rxjs';
+import {BehaviorSubject, combineLatest, distinctUntilChanged, filter, map, Observable, switchMap, take} from 'rxjs';
 import {
   ConfiguredDataInsightCatalog,
   ConfiguredDataInsightCatalogInput,
@@ -56,6 +56,14 @@ export class TaskService {
 
   toggleSupervisorConfig(config: string) {
     this.supervisorConfigSource.next(config)
+  }
+
+  createTaskByStep(){
+
+    // TODO : 管理配置
+    this.toggleSupervisorConfig("666")
+
+    return this.taskInput$.pipe(take(1), switchMap((r) => this.addTask(r)))
   }
 
   prevStep() {

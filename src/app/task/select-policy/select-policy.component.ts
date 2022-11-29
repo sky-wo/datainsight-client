@@ -3,6 +3,8 @@ import {TaskService} from "../../core/service/task.service";
 import {DataTag} from "../../core/type/graphql-type";
 import {PolicyService} from "../../core/service/policy.service";
 import {NzFormatEmitEvent} from "ng-zorro-antd/tree";
+import {NzMessageService} from "ng-zorro-antd/message";
+import {Router} from "@angular/router";
 
 @Component({
   selector: 'app-select-policy',
@@ -19,7 +21,7 @@ export class SelectPolicyComponent implements OnInit {
   originalData: DataTag[] = []
   intermediateDataForConvertedToTree: any[] = []
 
-  constructor(private policyService: PolicyService, private taskService: TaskService) {
+  constructor(private policyService: PolicyService, private router: Router, private taskService: TaskService, private message: NzMessageService) {
   }
 
   ngOnInit(): void {
@@ -87,12 +89,17 @@ export class SelectPolicyComponent implements OnInit {
   }
 
   nextStep() {
-    let flattenedNodes = this.flatTree(this.nzTreeComponent.getCheckedNodeList(), [])
-    let config = {
-      enabledDataTagIds: flattenedNodes
-    }
-    this.taskService.toggleInspectorConfig(config)
-    this.taskService.nextStep()
+    let inspectorConfig = {enabledDataTagIds: this.flatTree(this.nzTreeComponent.getCheckedNodeList(), [])}
+    this.taskService.toggleInspectorConfig(inspectorConfig)
+
+    this.taskService.createTaskByStep().subscribe({
+      next: _ => {
+        this.message.create("success", `任务创建成功`);
+        this.router.navigate(['/frame/task/'])
+      }, error: e => {
+        console.error(e)
+      }
+    })
   }
 
 }

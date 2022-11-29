@@ -94,11 +94,11 @@ export class SelectTableComponent implements OnInit {
     this.taskService.prevStep()
   }
 
-  finish() {
+  nextSetp() {
     const configuredDataInsightStreamInputs: ConfiguredDataInsightStreamInput[] = []
 
     Array.from(this.streamIdSelected).forEach(streamId => {
-      let  iDataInsightStream = this.datasource[streamId]
+      let iDataInsightStream = this.datasource[streamId]
 
       const cursorField = []
       if (iDataInsightStream.sourceDefinedCursor) {
@@ -126,19 +126,10 @@ export class SelectTableComponent implements OnInit {
       streams: configuredDataInsightStreamInputs
     })
 
-    // TODO : 管理配置
-    this.taskService.toggleSupervisorConfig("666")
+    this.taskService.nextStep()
 
-    this.taskService.taskInput$.pipe(take(1), switchMap((r) => this.taskService.addTask(r))).subscribe({
-      next: _ => {
-        this.message.create("success", `任务创建成功`);
-      }, error: e => {
-        console.error(e)
-      }
-    })
-
-    this.collectTableInfo()
-    this.router.navigate(['/frame/task/'])
+    // TODO:考虑后台返回
+    // this.collectTableInfo()
   }
 
 

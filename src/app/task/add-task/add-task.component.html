@@ -1,24 +1,20 @@
 <nz-card>
   <nz-steps [nzCurrent]="currentStep">
     <nz-step nzDescription="" nzTitle="选择数据源"></nz-step>
-    <nz-step nzDescription="" nzTitle="选择标签"></nz-step>
     <nz-step nzDescription="" nzTitle="选择表"></nz-step>
+    <nz-step nzDescription="" nzTitle="选择标签"></nz-step>
   </nz-steps>
 </nz-card>
 
 <nz-card style="margin-top: 24px">
   <div [hidden]="currentStep != 0">
-    <app-select-actor
-      class="step-content"
-    ></app-select-actor>
+    <app-select-actor></app-select-actor>
   </div>
   <div [hidden]="currentStep != 1">
-    <app-select-policy
-      class="step-content"
-    ></app-select-policy>
+    <app-select-table></app-select-table>
   </div>
   <div [hidden]="currentStep != 2">
-    <app-select-table></app-select-table>
+    <app-select-policy></app-select-policy>
   </div>
 </nz-card>
 
