@@ -15,17 +15,13 @@
       <td>{{ data.actor.name }}</td>
       <td>{{ data.state }}</td>
       <td>
-        <button nz-button nzType="primary" (click)="start(data.id)"
+        <button nz-button nzType="primary" (click)="startTask(data.id)"
           [nzLoading]="data.state==='RUNNING'?true:false">开始任务</button>
-        <button nz-button nzType="primary" (click)="cancel(data.id)"
+        <button nz-button nzType="primary" (click)="cancelTask(data.id)"
           [disabled]="data.state!=='RUNNING'?true:false">取消任务</button>
-        <button nz-button nzType="primary" (click)="remove(data.id)">删除任务</button>
+        <button nz-button nzType="primary" (click)="removeTask(data.id)">删除任务</button>
         <button nz-button nzType="primary" [routerLink]="['/frame/task/taskRun',data.id]">任务详情</button>
       </td>
     </tr>
   </tbody>
 </nz-table>
-
-<!-- <nz-modal [(nzVisible)]="isVisible" nzTitle="The first Modal" (nzOnCancel)="handleCancel()" (nzOnOk)="handleOk()">
-
-</nz-modal> -->
