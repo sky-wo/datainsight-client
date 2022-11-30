@@ -2,12 +2,12 @@
   "name": "datainsight-app",
   "version": "0.0.0",
   "scripts": {
-    "ng": "ng",
-    "start": "ng serve",
-    "build": "ng build",
-    "watch": "ng build --watch --configuration development",
-    "codegen": "gql-gen",
-    "test": "ng test"
+    "ng": "../node_modules/.bin/ng",
+    "start": "../node_modules/.bin/ng serve",
+    "build": "../node_modules/.bin/ng build",
+    "watch": "../node_modules/.bin/ng build --watch --configuration development",
+    "codegen": "../node_modules/.bin/gql-gen",
+    "test": "../node_modules/.bin/ng test"
   },
   "private": true,
   "dependencies": {
