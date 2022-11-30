@@ -1,7 +1,8 @@
-<nz-table #rowSelectionTable nzShowSizeChanger [nzData]="datasource" [nzLoading]="tableLoading()">
+<nz-table #rowSelectionTable nzShowSizeChanger [nzData]="datasource" [nzLoading]="tableLoading">
     <thead>
         <tr>
-            <th [(nzChecked)]="allCheckBoxTicked" [nzIndeterminate]="allCheckBoxIndeterminate" (nzCheckedChange)="onAllChecked($event)"></th>
+            <th [(nzChecked)]="allCheckBoxTicked" [nzIndeterminate]="allCheckBoxIndeterminate"
+                (nzCheckedChange)="onAllChecked($event)"></th>
             <th>表名</th>
             <th>namespace</th>
             <th>sourceDefinedCursor</th>
@@ -13,18 +14,22 @@
     <tbody>
         <tr *ngFor="let data of rowSelectionTable.data;let index=index">
             <td [nzChecked]="streamIdSelected.has(data.id)" (nzCheckedChange)="onItemChecked(data.id, $event)"></td>
-            <td>{{ data.stream.name }}</td>
-            <td>{{ data.stream.namespace }}</td>
-            <!-- todo 此处根据选取值动态显示 -->
-            <td> <input nz-input placeholder="Basic usage" [ngModel]="''"
-                    (ngModelChange)="setDefinedCursorValue($event,index)" /></td>
+            <td>{{ data.tableName }}</td>
+            <td>{{ data.namespace }}</td>
             <td>
-                <nz-select [ngModel]="syncModeItems[0]" (ngModelChange)="setSyncMode(data.id,$event)">
-                    <nz-option *ngFor="let i of syncModeItems" [nzValue]="i" [nzLabel]="i">
+                <nz-select *ngIf="data.chooseSyncMode===data.syncMode[2].syncmode"
+                    [ngModel]="data.chooseSourceDefinedCursor" (ngModelChange)="setDefinedCursorValue(data.id,$event)">
+                    <nz-option *ngFor="let cursor of data.sourceDefinedCursor" [nzValue]="cursor" [nzLabel]="cursor">
                     </nz-option>
                 </nz-select>
             </td>
-            <td>{{data.stream.sourceDefinedPrimaryKey}}</td>
+            <td>
+                <nz-select [ngModel]="data.syncMode[0]" (ngModelChange)="setSyncMode(data.id,$event)">
+                    <nz-option *ngFor="let i of data.syncMode" [nzValue]="i" [nzLabel]="i.name">
+                    </nz-option>
+                </nz-select>
+            </td>
+            <td>{{data.primaryKey}}</td>
             <td>
                 <button nz-button nzType="primary" (click)="showModal(index)">
                     <span>查看表</span>
@@ -34,9 +39,11 @@
     </tbody>
 </nz-table>
 
-<nz-modal [(nzVisible)]="dataSourceDetailsModalIsVisible" nzTitle="数据源详情" (nzOnCancel)="handleCancel()" (nzOnOk)="handleOk()">
+<nz-modal [(nzVisible)]="dataSourceDetailsModalIsVisible" nzTitle="数据源详情" (nzOnCancel)="handleCancel()"
+    (nzOnOk)="handleOk()">
     <ng-container *nzModalContent>
-        <nz-table #basicTable [nzData]="datasource[dataSourceDetailsModalPointsTo].properties">
+        <nz-table #basicTable [nzData]="datasource[dataSourceDetailsModalPointsTo].properties"
+            [nzFrontPagination]="false" [nzShowPagination]="false">
             <thead>
                 <tr>
                     <th>名称</th>
@@ -56,9 +63,8 @@
 </nz-modal>
 
 <div class="actions">
-  <button (click)="prevStep()" nz-button nzType="default">上一步</button>
-  <button (click)="nextSetp()" [nzType]="'primary'" nz-button>
-    下一步
-  </button>
+    <button (click)="prevStep()" nz-button nzType="default">上一步</button>
+    <button (click)="nextSetp()" [nzType]="'primary'" nz-button>
+        下一步
+    </button>
 </div>
-

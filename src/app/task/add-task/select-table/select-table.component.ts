@@ -1,6 +1,5 @@
-import {Component, OnInit} from '@angular/core';
-import {Router} from '@angular/router';
-import {BehaviorSubject} from 'rxjs';
+import { Component, OnInit } from '@angular/core';
+import { BehaviorSubject, filter, switchMap } from 'rxjs';
 import {
   Actor,
   ConfiguredDataInsightStreamInput,
@@ -8,32 +7,46 @@ import {
   DataInsightStream,
   DataInsightSyncMode
 } from 'src/app/core/type/graphql-type';
-import {JSONSchema7} from 'json-schema';
-import {NzMessageService} from 'ng-zorro-antd/message';
-import {ActorService} from 'src/app/core/service/actor.service';
-import {CounterService} from 'src/app/core/service/counter.service';
-import {Apollo, gql, QueryRef} from "apollo-angular";
-import {CreateTaskCommunicationService} from "../create-task-communication.service";
+import { JSONSchema7 } from 'json-schema';
+import { CounterService } from 'src/app/core/service/counter.service';
+import { Apollo, gql } from "apollo-angular";
+import { CreateTaskCommunicationService } from "../create-task-communication.service";
 
-interface ItemData {
+interface ITableRow {
   id: number;
-  name: string;
-  age: number;
-  address: string;
-}
+  tableName: string;
+  namespace: string;
+  //用户选中的sourceDefinedCursor
+  chooseSourceDefinedCursor: string;
+  //前台展示的sourceDefinedCursor
+  sourceDefinedCursor: string[];
+  //前台展示的syncmode
+  syncMode: ISyncMode[];
+  //用户选中的syncmode
 
-interface IDataInsightStream {
-  id: number;
-  stream: DataInsightStream
+  chooseSyncMode: DataInsightSyncMode
+
+  chooseDestinationSyncMode: DataInsightDestinationSyncMode
+
+  primaryKey: string[];
+
   properties: { [key: string]: JSONSchema7 }[]
-  sourceDefinedCursor?: string
-  syncMode: DataInsightSyncMode
+
+  stream: DataInsightStream
 }
 
-interface ITableCount {
-  dataSourceName: string,
-  tabelCount: number
+interface ISyncMode {
+  name: string
+  syncmode: DataInsightSyncMode
+  destinationSyncMode: DataInsightDestinationSyncMode
 }
+
+const syncMode: ISyncMode[] = [
+  { name: "Full refresh | Append", syncmode: DataInsightSyncMode.FullRefresh, destinationSyncMode: DataInsightDestinationSyncMode.Append },
+  { name: "Full refresh | Overwrite", syncmode: DataInsightSyncMode.FullRefresh, destinationSyncMode: DataInsightDestinationSyncMode.Overwrite },
+  { name: "Incremental | Append", syncmode: DataInsightSyncMode.Incremental, destinationSyncMode: DataInsightDestinationSyncMode.Append }
+]
+
 
 @Component({
   selector: 'app-select-table',
@@ -43,17 +56,23 @@ interface ITableCount {
 export class SelectTableComponent implements OnInit {
 
   allCheckBoxTicked = false
+
   allCheckBoxIndeterminate = false
+
   dataSourceDetailsModalIsVisible = false
+
   dataSourceDetailsModalPointsTo = 0
 
-  dataSourceCount!: ITableCount
   streamIdSelected = new Set<number>()
-  dataSource = new BehaviorSubject<IDataInsightStream[]>([])
+
+  dataSource = new BehaviorSubject<ITableRow[]>([])
+
   syncModeItems = [DataInsightSyncMode.FullRefresh, DataInsightSyncMode.Incremental]
 
+  tableLoading: boolean = false
 
-  constructor(private actorService: ActorService, private router: Router, private createTaskCommunicationService: CreateTaskCommunicationService, private message: NzMessageService, private counterService: CounterService, private apollo: Apollo) {
+
+  constructor(private createTaskCommunicationService: CreateTaskCommunicationService, private counterService: CounterService, private apollo: Apollo) {
   }
 
   get datasource() {
@@ -61,32 +80,67 @@ export class SelectTableComponent implements OnInit {
   }
 
   ngOnInit(): void {
-
-    this.createTaskCommunicationService.actorIdSource.subscribe(actotId => {
-      if (!!actotId) {
-        const tableData: IDataInsightStream[] = []
-        this.queryActorById(actotId).valueChanges.subscribe(actor => {
-
-          //统计数据源表数量
-          this.dataSourceCount = {
-            dataSourceName: actor.data.actor.name, tabelCount: actor.data.actor.catalog.streams.length
+    this.createTaskCommunicationService.actorIdSource.pipe(filter(r => !!r), switchMap(actotId => {
+      //每当新的actor被选择后需要重新加载数据，需将table的loading置为true
+      this.tableLoading = true
+      //请求actor的catalog
+      return this.apollo.watchQuery<{ actor: Actor }>({
+        query: gql`
+          query($actotId: ID!) {
+            actor(id: $actotId) {
+              name
+              catalog {
+                streams{
+                  defaultCursorField
+                  jsonSchema
+                  name
+                  namespace
+                  sourceDefinedCursor
+                  sourceDefinedPrimaryKey
+                  supportedSyncModes
+                }
+              }
+            }
           }
-
-          actor.data.actor.catalog.streams.forEach((dataInsightStream, index) => {
-            let properties: { [key: string]: JSONSchema7 }[] = []
-            Object.keys(dataInsightStream.jsonSchema.properties).forEach(res => {
-              const pro: { [key: string]: JSONSchema7 } = {}
-              pro[res] = dataInsightStream.jsonSchema.properties[res] as JSONSchema7
-              properties.push(pro)
-            })
-            tableData.push({
-              id: index, stream: dataInsightStream, properties: properties, syncMode: this.syncModeItems[0]
-            })
-          })
-          this.dataSource.next(tableData)
+        `,
+        variables: {
+          actotId
+        }
+      }).valueChanges
+    })).subscribe(actor => {
+      const tableData1: ITableRow[] = []
+      actor.data.actor.catalog.streams.forEach((dataInsightStream, index) => {
+        //找到表结构
+        let properties: { [key: string]: JSONSchema7 }[] = []
+        const cursor: string[] = []
+        Object.keys(dataInsightStream.jsonSchema.properties).forEach(res => {
+          const pro: { [key: string]: JSONSchema7 } = {}
+          pro[res] = dataInsightStream.jsonSchema.properties[res] as JSONSchema7
+          properties.push(pro)
+          cursor.push(res)
         })
-      }
-
+        //表命名空间
+        const namespance = dataInsightStream.namespace ? dataInsightStream.namespace : ""
+        //表主键
+        const primaryKey = dataInsightStream.sourceDefinedPrimaryKey ? dataInsightStream.sourceDefinedPrimaryKey : []
+        tableData1.push(
+          {
+            id: index,
+            tableName: dataInsightStream.name,
+            namespace: namespance,
+            sourceDefinedCursor: cursor,
+            primaryKey: primaryKey,
+            syncMode: syncMode,
+            properties: properties,
+            stream: dataInsightStream,
+            chooseDestinationSyncMode: syncMode[0].destinationSyncMode,
+            chooseSyncMode: syncMode[0].syncmode,
+            chooseSourceDefinedCursor: ''
+          })
+      })
+      this.dataSource.next(tableData1)
+      //请求接收到响应数据后恢复表单
+      this.tableLoading = false
     })
   }
 
@@ -96,90 +150,48 @@ export class SelectTableComponent implements OnInit {
 
   nextSetp() {
     const configuredDataInsightStreamInputs: ConfiguredDataInsightStreamInput[] = []
-
     Array.from(this.streamIdSelected).forEach(streamId => {
       let iDataInsightStream = this.datasource[streamId]
 
       const cursorField = []
-      if (iDataInsightStream.sourceDefinedCursor) {
-        cursorField.push(iDataInsightStream.sourceDefinedCursor!)
+      if (iDataInsightStream.chooseSourceDefinedCursor !== '') {
+        cursorField.push(iDataInsightStream.chooseSourceDefinedCursor)
       }
-
       // TODO: DataInsightDestinationSyncMode
       configuredDataInsightStreamInputs.push({
         cursorField: cursorField,
         destinationSyncMode: DataInsightDestinationSyncMode.Append,
-        primaryKey: iDataInsightStream.stream.sourceDefinedPrimaryKey,
+        primaryKey: iDataInsightStream.primaryKey,
         stream: {
-          name: iDataInsightStream.stream.name,
+          name: iDataInsightStream.tableName,
           jsonSchema: iDataInsightStream.stream.jsonSchema,
           defaultCursorField: iDataInsightStream.stream.defaultCursorField,
           namespace: iDataInsightStream.stream.namespace,
           sourceDefinedCursor: iDataInsightStream.stream.sourceDefinedCursor,
           supportedSyncModes: iDataInsightStream.stream.supportedSyncModes
         },
-        syncMode: iDataInsightStream.syncMode
+        syncMode: iDataInsightStream.chooseSyncMode
       })
     })
 
     this.createTaskCommunicationService.announceConfiguredCatalog({
       streams: configuredDataInsightStreamInputs
     })
-
+    this.createTaskCommunicationService.configuredCatalogSource.subscribe(r => console.log(r))
     this.createTaskCommunicationService.nextStep()
-
-    // TODO:考虑后台返回
-    // this.collectTableInfo()
   }
 
-  queryActorById(id: string): QueryRef<{ actor: Actor }, { id: string }> {
-    return this.apollo.watchQuery({
-      query: gql`
-        query($id: ID!) {
-          actor(id: $id) {
-            name
-            catalog {
-              streams{
-                defaultCursorField
-                jsonSchema
-                name
-                namespace
-                sourceDefinedCursor
-                sourceDefinedPrimaryKey
-                supportedSyncModes
-              }
-            }
-          }
-        }
-      `,
-      variables: {
-        id
-      }
-    })
-  }
-
-  collectTableInfo() {
-    const dataCount = this.counterService.getTableCount
-    if (dataCount.has(this.dataSourceCount.dataSourceName) && dataCount.get(this.dataSourceCount.dataSourceName)) {
-      const newCount = dataCount.get(this.dataSourceCount.dataSourceName)! + this.dataSourceCount.tabelCount
-      dataCount.set(this.dataSourceCount.dataSourceName, newCount)
-    } else {
-      dataCount.set(this.dataSourceCount.dataSourceName, this.dataSourceCount.tabelCount)
-    }
-    this.counterService.toggleTableCount(dataCount)
-  }
-
-
-  setSyncMode(index: number, mode: DataInsightSyncMode) {
+  setSyncMode(index: number, mode: ISyncMode) {
     const newDataSource = this.datasource
-    newDataSource[index].syncMode = mode
+    newDataSource[index].chooseSyncMode = mode.syncmode
+    newDataSource[index].chooseDestinationSyncMode = mode.destinationSyncMode
     this.dataSource.next(newDataSource)
   }
 
 
-  setDefinedCursorValue(value: string, index: number) {
+  setDefinedCursorValue(index: number, value: string) {
     const newDataSource = this.datasource
-    newDataSource[index].sourceDefinedCursor = value
+    newDataSource[index].chooseSourceDefinedCursor = value
     this.dataSource.next(newDataSource)
   }
 
@@ -195,10 +207,6 @@ export class SelectTableComponent implements OnInit {
 
   handleCancel(): void {
     this.dataSourceDetailsModalIsVisible = false;
-  }
-
-  tableLoading(): boolean {
-    return this.dataSource.value.length <= 0
   }
 
   onItemChecked(id: number, checked: boolean): void {

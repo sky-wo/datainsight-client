@@ -1,0 +1,20 @@
+<nz-collapse>
+    <!-- TODO 时间请求出错，后续解决 -->
+    <nz-collapse-panel *ngFor="let data of dataSource" [nzHeader]="header" [nzDisabled]="false">
+        <div class="taskRunLog">
+            <ul>
+                <li *ngFor="let item of data.logs.items">
+                    <span>{{item.message}}</span>
+                </li>
+            </ul>
+        </div>
+        <ng-template #header>
+            <span *ngIf="data.state==='SUCCESS'" nz-icon [nzType]="'check-circle'" [nzTheme]="'twotone'"
+                [nzTwotoneColor]="'#52c41a'"></span>
+            <span *ngIf="data.state!=='SUCCESS'" nz-icon [nzType]="'close-circle'" [nzTheme]="'twotone'"
+                [nzTwotoneColor]="'red'"></span>
+            <span>execution-{{data.state}}</span>
+        </ng-template>
+    </nz-collapse-panel>
+    <nz-pagination [(nzPageIndex)]="currentPage" [nzTotal]="taskRunTotal" [nzPageSize]="pageSize" (nzPageIndexChange)="pageChange()"></nz-pagination>
+</nz-collapse>

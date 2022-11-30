@@ -1,13 +1,12 @@
-import {Injectable} from '@angular/core';
-import {Apollo, gql, MutationResult, QueryRef} from "apollo-angular";
-import {BehaviorSubject, combineLatest, distinctUntilChanged, filter, map, Observable, switchMap, take} from 'rxjs';
+import { Injectable } from '@angular/core';
+import { BehaviorSubject, combineLatest, distinctUntilChanged, filter, map, switchMap, take } from 'rxjs';
 import {
   ConfiguredDataInsightCatalog,
   ConfiguredDataInsightCatalogInput,
   TaskInput,
   TaskInspectorConfig
 } from "../../core/type/graphql-type";
-import {TaskService} from "../../core/service/task.service";
+import { TaskService } from "../../core/service/task.service";
 
 @Injectable({
   providedIn: 'root'
@@ -38,7 +37,7 @@ export class CreateTaskCommunicationService {
     return taskInput
   }))
 
-  constructor(private apollo: Apollo, private taskService: TaskService) {
+  constructor(private taskService: TaskService) {
   }
 
   announceActorId(value: string) {
@@ -58,7 +57,7 @@ export class CreateTaskCommunicationService {
   }
 
 
-  createTaskByStep(){
+  createTaskByStep() {
 
     // TODO : 管理配置
     this.announceSupervisorConfig("666")
@@ -72,4 +71,5 @@ export class CreateTaskCommunicationService {
 
   nextStep() {
     this.currentStepSource.next(this.currentStepSource.value + 1)
-  }}
+  }
+}

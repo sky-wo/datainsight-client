@@ -1,8 +1,9 @@
-import {Component, OnInit} from '@angular/core';
-import {TaskService} from 'src/app/core/service/task.service';
-import {Actor, ActorPage} from 'src/app/core/type/graphql-type';
-import {Apollo, gql, QueryRef} from "apollo-angular";
-import {CreateTaskCommunicationService} from "../create-task-communication.service";
+import { Component, OnInit } from '@angular/core';
+import { TaskService } from 'src/app/core/service/task.service';
+import { Actor, ActorPage } from 'src/app/core/type/graphql-type';
+import { Apollo, gql, QueryRef } from "apollo-angular";
+import { CreateTaskCommunicationService } from "../create-task-communication.service";
+import { BehaviorSubject } from 'rxjs';
 
 @Component({
   selector: 'app-select-actor',
@@ -13,27 +14,25 @@ export class SelectActorComponent implements OnInit {
 
   actors!: readonly Actor[];
 
-  currentActorId: string | undefined
+
+
+  currentSelectSource: BehaviorSubject<string> = new BehaviorSubject<string>("")
+
+  pageSize: number = 2
+
+  totalData: number = 0
+
+  currentPageIndex: number = 1
 
   constructor(private createTaskCommunicationService: CreateTaskCommunicationService, private apollo: Apollo) {
   }
 
   ngOnInit(): void {
-    this.loadActorList()
+    this.loadActorList(this.pageSize, 0)
   }
 
-  loadActorList() {
-    this.queryActors(100, 0).valueChanges.subscribe({
-      next: r => {
-        this.actors = r.data.actors.items
-      }, error: e => {
-        console.error(e)
-      }
-    })
-  }
-
-  queryActors(first: number, skip: number): QueryRef<{ actors: ActorPage }, { first: number, skip: number }> {
-    return this.apollo.watchQuery({
+  loadActorList(first: number, skip: number) {
+    this.apollo.watchQuery<{ actors: ActorPage }>({
       query: gql`
         query ($first: Int!, $skip: Long!) {
           actors(first: $first, skip: $skip) {
@@ -41,18 +40,42 @@ export class SelectActorComponent implements OnInit {
             items {
               id
               name
+              connector{
+                name
+                version
+              }
             }
           }
         }
       `, variables: {
         first, skip
       }
+    }).valueChanges.subscribe({
+      next: r => {
+        this.totalData = r.data.actors.total
+        this.actors = r.data.actors.items
+      }, error: e => {
+        console.error(e)
+      }
     })
   }
 
-  nextStep() {
-    this.createTaskCommunicationService.announceActorId(this.currentActorId!)
-    this.createTaskCommunicationService.nextStep()
+  pageChange() {
+    this.loadActorList(this.pageSize, (this.currentPageIndex - 1) * this.pageSize)
+  }
+  selectActive(id: string): boolean {
+    if (id !== this.currentSelectSource.value) {
+      return false
+    }
+    return true
   }
 
+  chooseActor(id: string) {
+    this.currentSelectSource.next(id)
+  }
+
+  nextStep() {
+    this.createTaskCommunicationService.announceActorId(this.currentSelectSource.value)
+    this.createTaskCommunicationService.nextStep()
+  }
 }

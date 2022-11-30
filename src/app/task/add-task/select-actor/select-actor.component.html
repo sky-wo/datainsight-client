@@ -1,11 +1,24 @@
 <nz-card>
-  <nz-select [(ngModel)]="currentActorId">
-    <nz-option *ngFor="let connector of this.actors" [nzLabel]="connector.name" [nzValue]="connector.id">
-    </nz-option>
-  </nz-select>
+  <nz-table #basicTable [nzData]="actors" [nzTotal]="totalData" [(nzPageIndex)]="currentPageIndex"
+    [nzFrontPagination]="false" [(nzPageSize)]="pageSize" (nzPageIndexChange)="pageChange()">
+    <thead>
+      <tr>
+        <th>actors名称</th>
+        <th>连接器</th>
+        <th>连接器版本</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr *ngFor="let data of basicTable.data" [class.active]="selectActive(data.id)" (click)="chooseActor(data.id)">
+        <td>{{ data.name }}</td>
+        <td>{{ data.connector?.name }}</td>
+        <td>{{ data.connector?.version }}</td>
+      </tr>
+    </tbody>
+  </nz-table>
 
   <div class="actions">
-    <button (click)="nextStep()" [disabled]="!this.currentActorId" [nzType]="'primary'" nz-button>
+    <button (click)="nextStep()" [disabled]="!currentSelectSource.value" [nzType]="'primary'" nz-button>
       下一步
     </button>
   </div>
