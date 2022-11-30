@@ -13,13 +13,15 @@ export class PolicyTreeComponent implements OnInit {
   // Todo: 标签父子关系、是否联动控制？ [nzSelectedKeys]="defaultSelectedKeys"
 
   @ViewChild('nzTreeComponent') nzTreeComponent: any
-  defaultCheckedKeys = [];
-  defaultSelectedKeys = [];
-  defaultExpandedKeys = [];
+  isAllowedDrag = false
+  defaultCheckedKeys = []
+  defaultExpandedKeys = []
   nodesForView: any [] = []
 
   originalDataTagList: DataTag[] = []
   currentlySelectedNode: DataTag | undefined = undefined
+
+  labelMoveScratchpad: any[] = []
 
   constructor(private policyService: PolicyService, private apollo: Apollo, private notification: NzNotificationService) {
   }
@@ -28,36 +30,40 @@ export class PolicyTreeComponent implements OnInit {
     this.loadAllPolicy()
   }
 
-  clickMe() {
-    console.log(this.nzTreeComponent.getCheckedNodeList())
-    console.log(this.flattenNodes(this.nzTreeComponent.getCheckedNodeList(), []))
+  dragSortingNode(confirm: boolean = false) {
+    if (confirm) {
+      this.isAllowedDrag = false
+      for (let event of this.labelMoveScratchpad) {
+        this.policyService.moveDataTag(event.id, event.parentId).subscribe({
+          next: _ => {
+            this.notification.success('修改成功', '')
+            this.loadAllPolicy()
+          }, error: e => {
+            this.notification.error('异常', '')
+            console.error(e)
+          }
+        })
+      }
+      this.labelMoveScratchpad = []
+    } else {
+      this.isAllowedDrag = true
+    }
   }
 
   nzEvent(event: NzFormatEmitEvent): void {
-    if (event.eventName == "click") {
-      this.getTagDetails(event.node?.key!)
-    } else {
-      console.log(event)
+    switch (event.eventName) {
+      case "click" : {
+        this.getTagDetails(event.node?.key!)
+        break
+      }
+      case "drop" : {
+        this.accumulateAllSorts(event)
+        break
+      }
+      default: {
+        break
+      }
     }
-  }
-
-  isLeaf(dataTagId: string) {
-    let isLeaf = true
-    for (let d of this.originalDataTagList) {
-      if (d.parentId == dataTagId) isLeaf = false
-    }
-    return isLeaf
-  }
-
-  /**
-   * 递归读取树结构的 nodes，展开为一维数组
-   * */
-  flattenNodes(nodes: any[], arr: any[]) {
-    for (let item of nodes) {
-      arr.push(item.key)
-      if (item.children && item.children.length) this.flattenNodes(item.children, arr)
-    }
-    return arr
   }
 
   /**
@@ -77,6 +83,38 @@ export class PolicyTreeComponent implements OnInit {
         return item
       })
     }
+  }
+
+  /**
+   * 递归读取树结构的 nodes，展开为一维数组，可用于解析已勾选的节点
+   *
+   * this.flattenNodes(this.nzTreeComponent.getCheckedNodeList(), [])
+   * */
+  flattenNodes(nodes: any[], arr: any[]) {
+    for (let item of nodes) {
+      arr.push(item.key)
+      if (item.children && item.children.length) this.flattenNodes(item.children, arr)
+    }
+    return arr
+  }
+
+  isLeaf(dataTagId: string) {
+    let isLeaf = true
+    for (let d of this.originalDataTagList) {
+      if (d.parentId == dataTagId) isLeaf = false
+    }
+    return isLeaf
+  }
+
+  getDataTagById(id: String) {
+    let dataTag: DataTag
+    for (let d of this.originalDataTagList) {
+      if (d.id == id) {
+        dataTag = d
+        break
+      }
+    }
+    return dataTag!
   }
 
   loadAllPolicy() {
@@ -111,7 +149,9 @@ export class PolicyTreeComponent implements OnInit {
         let intermediateData = this.originalDataTagList.map(item => {
           let parentId = item.parentId ? item.parentId : ''
           return {
-            key: item.id, title: item.name, parentId: parentId, isLeaf: this.isLeaf(item.id)
+            // Todo 没叶子节点 以用来允许放置在最后面
+            // key: item.id, title: item.name, parentId: parentId, isLeaf: this.isLeaf(item.id)
+            key: item.id, title: item.name, parentId: parentId, isLeaf: false
           }
         })
         this.nodesForView = this.convertedToTree("", intermediateData)
@@ -119,6 +159,19 @@ export class PolicyTreeComponent implements OnInit {
         console.error(e)
       }
     })
+  }
+
+  /**
+   * 积攒所有排序更改，保存到 labelMoveScratchpad
+   * */
+  accumulateAllSorts(event: NzFormatEmitEvent) {
+    let dragNode = event.dragNode
+    let originalNode = this.getDataTagById(dragNode?.key!)
+    let dragNodeParentId = (!!dragNode?.parentNode?.key) ? dragNode?.parentNode?.key : undefined
+    let originalNodeParentId = (!!originalNode.parentId) ? originalNode.parentId : undefined
+    if (dragNodeParentId != originalNodeParentId) {
+      this.labelMoveScratchpad.push({id: originalNode.id, parentId: dragNodeParentId})
+    }
   }
 
   getTagDetails(id: string) {

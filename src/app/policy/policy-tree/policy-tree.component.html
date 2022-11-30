@@ -3,11 +3,12 @@
   (nzCheckBoxChange)="nzEvent($event)"
   (nzClick)="nzEvent($event)"
   (nzExpandChange)="nzEvent($event)"
+  (nzOnDrop)="nzEvent($event)"
   [nzCheckedKeys]="defaultCheckedKeys"
   [nzData]="nodesForView"
+  [nzDraggable]="isAllowedDrag"
   [nzExpandedKeys]="defaultExpandedKeys"
   nzCheckable
-  nzMultiple
 ></nz-tree>
 
 <div *ngIf="!!currentlySelectedNode">
@@ -24,9 +25,12 @@
     </div>
   </nz-card>
   <ng-template #extraTemplate>
-    <a>More</a>
+    <a>移动规则</a>
   </ng-template>
 </div>
 
+<!-- Todo: 移动规则-->
+<button (click)="dragSortingNode()" *ngIf="!isAllowedDrag" nz-button nzType="primary"> 移动标签</button>
 
-<button (click)="clickMe()" nz-button nzType="primary"> 移动标签</button>
+<button (click)="dragSortingNode(true)" *ngIf="isAllowedDrag" nz-button nzType="primary"> 确认移动</button>
+
