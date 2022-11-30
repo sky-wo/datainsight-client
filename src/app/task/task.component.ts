@@ -1,8 +1,8 @@
-import { Component, OnInit } from '@angular/core';
-import { NzMessageService } from 'ng-zorro-antd/message';
-import { ActorService } from '../core/service/actor.service';
-import { TaskService } from '../core/service/task.service';
-import { Actor, TaskState } from '../core/type/graphql-type';
+import {Component, OnInit} from '@angular/core';
+import {NzMessageService} from 'ng-zorro-antd/message';
+import {ActorService} from '../core/service/actor.service';
+import {TaskService} from '../core/service/task.service';
+import {TaskState} from '../core/type/graphql-type';
 
 
 interface listTaskItem {
@@ -10,6 +10,7 @@ interface listTaskItem {
   state: TaskState
   actor: { name: string }
 }
+
 @Component({
   selector: 'app-task',
   templateUrl: './task.component.html',
@@ -18,20 +19,19 @@ interface listTaskItem {
 export class TaskComponent implements OnInit {
 
 
-
   isVisible = false;
 
   listData: listTaskItem[] = []
   pageIndex: number = 1
   pageSize: number = 10
   totalData: number = 0
+
   constructor(private taskService: TaskService, private actorService: ActorService, private message: NzMessageService) {
 
   }
 
 
   ngOnInit(): void {
-    setInterval(() => { this.taskService.pagingQueryTasks(this.pageSize, (this.pageIndex - 1) * this.pageSize).refetch() }, 1000)
     this.tasklists()
   }
 
@@ -62,6 +62,7 @@ export class TaskComponent implements OnInit {
       }
     })
   }
+
   cancel(id: string) {
     this.taskService.cancelTaskById(id).subscribe({
       next: _ => {
@@ -90,7 +91,6 @@ export class TaskComponent implements OnInit {
 
   detail() {
   }
-
 
 
   showModal(): void {

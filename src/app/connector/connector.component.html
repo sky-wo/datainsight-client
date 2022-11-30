@@ -1,46 +1,41 @@
-<button nz-button nzType="primary" (click)="showModal()">
+<button (click)="showModal()" nz-button nzType="primary">
   <span>添加镜像</span>
 </button>
-<nz-modal [(nzVisible)]="isVisible" nzTitle="Modal Title" (nzOnCancel)="handleCancel()" (nzOnOk)="submitForm()"
-          [nzOkLoading]="isOkLoading">
-  <nz-card *nzModalContent nzTitle="添加镜像">
-    <form nz-form [formGroup]="validateForm" (submit)="submitForm()">
+<nz-modal (nzOnCancel)="handleCancel()" (nzOnOk)="addConnector()" [(nzVisible)]="addConnector_Modal_IsVisible" [nzOkLoading]="addConnector_Modal_OkLoading"
+          nzTitle="Modal Title">
+  <nz-card *nzModalContent nzTitle="配置镜像信息">
+    <form [formGroup]="addConnector_Form_Validate" nz-form>
       <nz-form-item>
-        <nz-form-label [nzSpan]="4" nzRequired nzFor="name">镜像名称</nz-form-label>
+        <nz-form-label [nzSpan]="4" nzFor="name" nzRequired>镜像名称</nz-form-label>
         <nz-form-control [nzSpan]="8" nzErrorTip="请输入镜像名称">
-          <input type="text" nz-input formControlName="name" placeholder="请输入镜像名称"/>
+          <input formControlName="name" nz-input placeholder="请输入镜像名称" type="text"/>
         </nz-form-control>
       </nz-form-item>
       <nz-form-item>
-        <nz-form-label [nzSpan]="4" nzRequired nzFor="image">镜像</nz-form-label>
+        <nz-form-label [nzSpan]="4" nzFor="image" nzRequired>镜像</nz-form-label>
         <nz-form-control [nzSpan]="8" nzErrorTip="请输入镜像名称">
-          <input type="text" nz-input formControlName="image" placeholder="请输入镜像名称"/>
+          <input formControlName="image" nz-input placeholder="请输入镜像名称" type="text"/>
         </nz-form-control>
       </nz-form-item>
       <nz-form-item>
-        <nz-form-label [nzSpan]="4" nzRequired nzFor="version">版本</nz-form-label>
+        <nz-form-label [nzSpan]="4" nzFor="version" nzRequired>版本</nz-form-label>
         <nz-form-control [nzSpan]="8" nzErrorTip="请输入镜像名称">
-          <input type="text" nz-input formControlName="version" placeholder="请输入镜像版本"/>
+          <input formControlName="version" nz-input placeholder="请输入镜像版本" type="text"/>
         </nz-form-control>
       </nz-form-item>
-      <!-- <nz-form-item>
-          <nz-form-control [nzSpan]="8" [nzOffset]="4">
-              <button nz-button nzType="primary" [nzLoading]="loading">下一步</button>
-          </nz-form-control>
-      </nz-form-item> -->
     </form>
   </nz-card>
 </nz-modal>
-<nz-table #basicTable [nzData]="listOfData" [(nzPageIndex)]="currentPageIndex" [(nzPageSize)]="pageSize"
-          [nzTotal]="totalData"
-          [nzFrontPagination]="false" (nzPageIndexChange)="pageChange()">
+
+<nz-table #basicTable (nzPageIndexChange)="pageChange()" [(nzPageIndex)]="currentPageIndex" [(nzPageSize)]="pageSize"
+          [nzData]="connectorList"
+          [nzFrontPagination]="false" [nzTotal]="totalData">
   <thead>
   <tr>
     <th>名称</th>
     <th>镜像</th>
     <th>版本</th>
     <th>操作</th>
-
   </tr>
   </thead>
   <tbody>
