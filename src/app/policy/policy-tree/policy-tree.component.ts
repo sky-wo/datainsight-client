@@ -1,7 +1,7 @@
 import {Component, OnInit, ViewChild} from '@angular/core';
 import {DataTag, DataTagsPage} from "../../core/type/graphql-type";
 import {PolicyService} from "../../core/service/policy.service";
-import {Apollo, gql, QueryRef} from "apollo-angular";
+import {Apollo, gql} from "apollo-angular";
 import {NzNotificationService} from "ng-zorro-antd/notification";
 import {NzFormatEmitEvent} from "ng-zorro-antd/tree";
 
@@ -18,90 +18,110 @@ export class PolicyTreeComponent implements OnInit {
   defaultExpandedKeys = [];
   nodesForView: any [] = []
 
-  originalData: DataTag[] = []
-  intermediateDataForConvertedToTree: any[] = []
-
+  originalDataTagList: DataTag[] = []
   currentlySelectedNode: DataTag | undefined = undefined
 
   constructor(private policyService: PolicyService, private apollo: Apollo, private notification: NzNotificationService) {
   }
 
   ngOnInit(): void {
-    this.loadAllPolicys()
+    this.loadAllPolicy()
   }
 
-  loadAllPolicys() {
-    this.pagingQueryDataTags(200, 0).valueChanges.subscribe({
+  clickMe() {
+    console.log(this.nzTreeComponent.getCheckedNodeList())
+    console.log(this.flattenNodes(this.nzTreeComponent.getCheckedNodeList(), []))
+  }
+
+  nzEvent(event: NzFormatEmitEvent): void {
+    if (event.eventName == "click") {
+      this.getTagDetails(event.node?.key!)
+    } else {
+      console.log(event)
+    }
+  }
+
+  isLeaf(dataTagId: string) {
+    let isLeaf = true
+    for (let d of this.originalDataTagList) {
+      if (d.parentId == dataTagId) isLeaf = false
+    }
+    return isLeaf
+  }
+
+  /**
+   * 递归读取树结构的 nodes，展开为一维数组
+   * */
+  flattenNodes(nodes: any[], arr: any[]) {
+    for (let item of nodes) {
+      arr.push(item.key)
+      if (item.children && item.children.length) this.flattenNodes(item.children, arr)
+    }
+    return arr
+  }
+
+  /**
+   * 处理后台返回的 一维数组 ，转换为 带有父子关系的 树形结构
+   *
+   * 外部调用时，pid = "" ，即取得所有根节点
+   * */
+  convertedToTree(pid: string, list: any[]) {
+    if (!pid) {
+      return list.filter(item => !item.parentId).map(item => {
+        item.children = this.convertedToTree(item.key, list)
+        return item
+      })
+    } else {
+      return list.filter(item => item.parentId === pid).map(item => {
+        item.children = this.convertedToTree(item.key, list)
+        return item
+      })
+    }
+  }
+
+  loadAllPolicy() {
+    this.apollo.watchQuery<{ dataTags: DataTagsPage }>({
+      query: gql`
+        query ($first: Int!, $skip: Long!) {
+          dataTags(first: $first, skip: $skip) {
+            total
+            items {
+              alert
+              id
+              level
+              name
+              parentId
+              rules(first: 100, skip: 0) {
+                items{
+                  content
+                  dataTagId
+                  id
+                }
+                total
+              }
+            }
+          }
+        }
+      `, variables: {
+        first: 200, skip: 0
+      }
+    }).valueChanges.subscribe({
       next: r => {
-        this.originalData = r.data.dataTags.items as DataTag[]
-        this.intermediateDataForConvertedToTree = this.originalData.map(item => {
+        this.originalDataTagList = r.data.dataTags.items as DataTag[]
+        let intermediateData = this.originalDataTagList.map(item => {
           let parentId = item.parentId ? item.parentId : ''
           return {
             key: item.id, title: item.name, parentId: parentId, isLeaf: this.isLeaf(item.id)
           }
         })
-        this.nodesForView = this.convertedToTree()
+        this.nodesForView = this.convertedToTree("", intermediateData)
       }, error: e => {
         console.error(e)
       }
     })
   }
 
-  convertedToTree(pid = '') {
-    if (!pid) {
-      // 如果没有父id（第一次递归的时候）将所有父级查询出来
-      return this.intermediateDataForConvertedToTree.filter(item => !item.parentId).map(item => {
-        // 通过父节点ID查询所有子节点
-        item.children = this.convertedToTree(item.key)
-        return item
-      })
-    } else {
-      return this.intermediateDataForConvertedToTree.filter(item => item.parentId === pid).map(item => {
-        // 通过父节点ID查询所有子节点
-        item.children = this.convertedToTree(item.key)
-        return item
-      })
-    }
-  }
-
-  isLeaf(datatagId: string) {
-    let isLeaf = true
-    for (let dataTag2 of this.originalData) {
-      if (dataTag2.parentId == datatagId) isLeaf = false
-    }
-    return isLeaf
-  }
-
-  nzEvent(event: NzFormatEmitEvent): void {
-    if (event.eventName == "click") {
-      this.clickNode(event.node?.key!)
-    } else {
-      console.log(event)
-    }
-  }
-
-  ngAfterViewInit(): void {
-  }
-
-  readNodes(nodes: any[], arr: any[]) {
-    for (let item of nodes) {
-      arr.push(item.key)
-      if (item.children && item.children.length) this.readNodes(item.children, arr)
-    }
-    return arr
-  }
-
-
-  clickMe() {
-    console.log(this.nzTreeComponent.getCheckedNodeList())
-    console.log(this.readNodes(this.nzTreeComponent.getCheckedNodeList(), []))
-  }
-
-
-
-
-
-  clickNode(id: string) {
+  getTagDetails(id: string) {
     this.apollo.watchQuery<{ dataTag: DataTag }, { id: string }>({
       query: gql`
         query($id: ID!) {
@@ -129,32 +149,4 @@ export class PolicyTreeComponent implements OnInit {
     })
   }
 
-  pagingQueryDataTags(first: number, skip: number): QueryRef<{ dataTags: DataTagsPage }, { first: number, skip: number }> {
-    return this.apollo.watchQuery({
-      query: gql`
-        query ($first: Int!, $skip: Long!) {
-          dataTags(first: $first, skip: $skip) {
-            total
-            items {
-              alert
-              id
-              level
-              name
-              parentId
-              rules(first: 100, skip: 0) {
-                items{
-                  content
-                  dataTagId
-                  id
-                }
-                total
-              }
-            }
-          }
-        }
-      `, variables: {
-        first, skip
-      }
-    })
-  }
 }
